@@ -1,380 +1,1149 @@
-<!-- ... existing code ... -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="APOLLO" />
+  <meta name="theme-color" content="#0B0A0E" />
+  <link id="apple-icon-link" rel="apple-touch-icon" href="" />
+  <link id="manifest-link" rel="manifest" href="" />
+  <title>APOLLO // TERMINAL FINANCIERA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+    :root {
+      --bg:#0B0A0E; --panel:#16141C; --elev:#211D2A; --border:#3B334A;
+      --red:#D9534F; --beige:#E6DEC8; --ochre:#C89D66; --ash:#9E96A8; --green:#5FA882;
     }
-
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      max-width: 100vw;
-      min-height: 100dvh;
-      background-color: #0B0A0E;
-      color: #E6DEC8;
-      font-family: 'Space Grotesk', sans-serif;
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      user-select: none;
+      margin:0; padding:0; width:100%; min-height:100vh;
+      background:var(--bg); color:var(--beige);
+      font-family:'Space Grotesk',sans-serif; overflow-x:hidden;
     }
-
-    /* Atmospheric Cyberpunk Horizon (Inspired by User Reference Image) */
-    .cyber-sky-header {
-      background: linear-gradient(180deg, #1F192B 0%, #2C2338 45%, #3B2835 80%, #16141C 100%);
-      position: relative;
-      overflow: hidden;
-      border-bottom: 1px solid #3B334A;
-      padding-top: max(env(safe-area-inset-top, 0px), 48px);
+    .mono { font-family:'JetBrains Mono',monospace; }
+    .safe-top { padding-top:max(env(safe-area-inset-top, 0px), 50px); }
+    .safe-bottom { padding-bottom:max(env(safe-area-inset-bottom, 0px), 24px); }
+    .modal-safe { padding-top:max(env(safe-area-inset-top, 0px), 44px); padding-bottom:32px; }
+    .panel {
+      background:rgba(22,20,28,0.94); border:1px solid var(--border);
+      clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     }
-
-    /* Brutalist Cut-Corner Card */
-<!-- ... existing code ... -->
-    input, select, textarea {
-      font-size: 16px !important; /* Prevents iOS auto-zoom on focus */
+    .panel-flat { background:rgba(22,20,28,0.95); border:1px solid var(--border); }
+    .inp {
+      width:100%; background:#0E0C12; border:1px solid var(--border);
+      color:var(--beige); padding:10px 12px; font-size:13px;
+      font-family:'JetBrains Mono',monospace; text-transform:uppercase; outline:none;
     }
-
-    /* Bottom Navigation iOS Home Indicator Clearance */
-    .ios-bottom-nav {
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+    .inp:focus { border-color:var(--red); }
+    .btn-red {
+      background:linear-gradient(135deg,#D9534F,#B6423E); color:#0B0A0E;
+      font-weight:700; font-family:'JetBrains Mono',monospace; letter-spacing:0.05em;
     }
-
-    /* Modal Safe-Area & Scrollable Container for iPhone */
-    .ios-modal-overlay {
-      padding-top: max(env(safe-area-inset-top, 0px), 48px);
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 32px);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+    .btn-ghost {
+      background:#1B1824; border:1px solid var(--border); color:var(--beige);
+      font-family:'JetBrains Mono',monospace;
     }
+    .tag {
+      font-family:'JetBrains Mono',monospace; font-size:10px;
+      padding:2px 6px; border:1px solid var(--border); background:#13111A;
+    }
+    @keyframes pulseEye { 0%,100%{opacity:1;} 50%{opacity:0.45;} }
+    .eye-glow { animation:pulseEye 3s infinite; }
   </style>
 </head>
+<body class="pb-32">
 
-<body class="min-h-screen flex flex-col justify-between pb-36">
+  <!-- FONDO ECLIPSE -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-14 left-1/2 -translate-x-1/2 w-56 h-56 rounded-full opacity-25"
+         style="background:radial-gradient(circle,#E06D53 0%,#D9534F 45%,transparent 75%);"></div>
+  </div>
 
-  <!-- ==================== ATMOSPHERIC HEADER & APOLLO OWL MASCOT ==================== -->
-  <header class="cyber-sky-header pb-3 px-3 sm:px-4 sticky top-0 z-30 shadow-2xl">
-    <!-- Red Eclipse Sun & Trajectory Line from Reference Image -->
-    <div class="eclipse-sun"></div>
-    <div class="horizon-beam"></div>
-
-    <!-- Industrial Brutalist Skyline Silhouette SVG -->
-    <svg class="absolute bottom-0 left-0 w-full h-14 pointer-events-none opacity-85" viewBox="0 0 800 90" preserveAspectRatio="none">
-      <path fill="#0B0A0E" d="M0,90 L0,45 L28,45 L28,20 L34,20 L34,45 L55,45 L55,65 L85,65 L85,12 L118,12 L118,70 L145,70 L145,35 L182,35 L182,78 L220,78 L220,50 L255,50 L255,82 L310,82 L310,58 L350,58 L350,75 L410,75 L410,48 L435,48 L435,80 L485,80 L485,30 L515,30 L515,72 L555,72 L555,15 L585,15 L585,68 L630,68 L630,40 L670,40 L670,75 L715,75 L715,22 L760,22 L760,60 L800,60 L800,90 Z"/>
-      <path fill="#16141C" opacity="0.65" d="M65,90 L65,30 L95,30 L95,90 Z M195,90 L195,18 L230,18 L230,90 Z M520,90 L520,38 L550,38 L550,90 Z M680,90 L680,28 L708,28 L708,90 Z"/>
-    </svg>
-
-    <!-- Top Status Bar & Quick Actions for iPhone -->
-    <div class="relative z-10 max-w-3xl mx-auto">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-eclipse animate-pulse"></span>
-            <span class="font-mono text-[10px] tracking-[0.18em] text-ash uppercase truncate">TELEMETRÍA // OFFLINE PWA</span>
-          </div>
-          <h1 class="text-base sm:text-xl font-bold tracking-wider text-sand flex flex-wrap items-center gap-1.5">
-            <span>APOLLO // TERMINAL</span>
-            <span id="pwaStatusBadge" class="text-[9px] font-mono font-normal px-1.5 py-0.5 bg-abyss/80 border border-mist text-terracotta">PWA LISTA</span>
-          </h1>
-        </div>
-
-        <!-- Quick Header Actions: Period Selector & Direct Wipe Demo Button -->
-        <div class="flex items-center gap-1.5">
-          <button onclick="openWipeConfirmModal()" title="Borrar datos demo e iniciar de cero" class="cyber-btn bg-eclipse/25 border border-eclipse text-sand hover:bg-eclipse hover:text-abyss font-mono text-[10px] font-bold px-2.5 py-1.5 flex items-center gap-1 shadow">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-terracotta"></i>
-            <span>INICIAR DE CERO</span>
-          </button>
-          <select id="currentMonthSelect" onchange="handleMonthChange(this.value)" class="bg-abyss/90 border border-mist text-sand font-mono text-[11px] px-2 py-1.5 focus:outline-none focus:border-eclipse">
-            <option value="ENERO">ENE</option>
-            <option value="FEBRERO">FEB</option>
-            <option value="MARZO">MAR</option>
-            <option value="ABRIL">ABR</option>
-            <option value="MAYO">MAY</option>
-            <option value="JUNIO">JUN</option>
-            <option value="JULIO">JUL</option>
-            <option value="AGOSTO">AGO</option>
-            <option value="SEPTIEMBRE">SEP</option>
-            <option value="OCTUBRE">OCT</option>
-            <option value="NOVIEMBRE" selected>NOV</option>
-            <option value="DICIEMBRE">DIC</option>
-          </select>
+  <!-- ENCABEZADO SEGURO PARA IPHONE -->
+  <header class="sticky top-0 z-30 bg-[#0B0A0E]/95 backdrop-blur-md border-b border-[#3B334A] safe-top px-4 pb-3">
+    <div class="max-w-xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#D9534F]"></span>
+        <div>
+          <h1 class="mono text-sm font-bold tracking-widest text-[#E6DEC8]">APOLLO // FIN-OS</h1>
+          <p id="lbl-cycle" class="mono text-[10px] text-[#9E96A8]">CICLO ACTIVO</p>
         </div>
       </div>
-
-      <!-- APOLLO: CYBERNETIC PLAGUE-DOCTOR OWL ANALYTICAL MODULE -->
-<!-- ... existing code ... -->
-  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
-  <main class="flex-1 max-w-3xl w-full mx-auto px-3 sm:px-4 pt-3 pb-16 space-y-5">
-
-    <!-- QUICK ACTION BANNER: LIMPIAR DATOS DEMO / INICIAR DE CERO -->
-    <div id="quickWipeBanner" class="cyber-card p-3 border-l-2 border-l-eclipse bg-charcoal/95 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2 min-w-0">
-        <i data-lucide="Database" class="w-4 h-4 text-terracotta shrink-0"></i>
-        <div class="font-mono text-[11px] text-sand leading-tight">
-          <span class="text-terracotta font-bold uppercase">CONTROL DE BASE DE DATOS:</span>
-          <span class="text-ash"> Limpia los datos de prueba cuando quieras iniciar tu registro real.</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="openWipeConfirmModal()" class="cyber-btn bg-eclipse text-abyss font-mono text-[10px] font-bold px-2.5 py-1.5 flex items-center gap-1">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          <span>LIMPIAR DATOS DEMO (INICIAR DE CERO)</span>
+      <div class="flex items-center gap-1.5">
+        <button onclick="resetToZero()" class="mono text-[10px] px-2.5 py-1.5 bg-[#D9534F]/20 border border-[#D9534F] text-[#E6DEC8] font-bold">
+          🗑️ INICIAR DE CERO
+        </button>
+        <button onclick="openQuickModal()" class="btn-red text-xs px-3 py-1.5">
+          + REGISTRO
         </button>
       </div>
     </div>
 
-    <!-- ==================== TAB 1: DASHBOARD PRINCIPAL (RESUMEN MENSUAL) ==================== -->
-    <section id="tab-dashboard" class="space-y-4">
-<!-- ... existing code ... -->
-    <!-- ==================== TAB 5: RESPALDO PORTÁTIL (.JSON & .CSV) ==================== -->
-    <section id="tab-respaldo" class="space-y-4 hidden">
-      <div class="border-b border-mist pb-3">
-        <h2 class="text-sm font-bold tracking-wider uppercase text-sand flex items-center gap-2">
-          <i data-lucide="hard-drive-download" class="w-4 h-4 text-eclipse"></i>
-          BÓVEDA LOCAL // RESPALDO Y REINICIO DE DATOS
-        </h2>
-        <p class="font-mono text-[11px] text-ash mt-0.5">
-          TUS DATOS VIVEN 100% EN LA MEMORIA INTERNA DE TU IPHONE (SIN SERVIDORES EXTERNOS)
-        </p>
+    <!-- APOLLO OWL -->
+    <div class="max-w-xl mx-auto mt-2.5 panel-flat p-2.5 flex items-center gap-3">
+      <div onclick="nextInsight()" class="cursor-pointer shrink-0 w-12 h-12 bg-[#0B0A0E] border border-[#3B334A] flex items-center justify-center" title="Siguiente diagnóstico">
+        <svg viewBox="0 0 64 64" class="w-10 h-10">
+          <polygon points="14,18 24,8 28,20" fill="#231F2E" stroke="#9E96A8" stroke-width="1.5"/>
+          <polygon points="50,18 40,8 36,20" fill="#231F2E" stroke="#9E96A8" stroke-width="1.5"/>
+          <polygon points="14,18 50,18 54,44 32,58 10,44" fill="#16141C" stroke="#E6DEC8" stroke-width="1.5"/>
+          <circle cx="23" cy="29" r="5.5" fill="#0B0A0E" stroke="#C89D66" stroke-width="1.5"/>
+          <circle cx="41" cy="29" r="5.5" fill="#0B0A0E" stroke="#C89D66" stroke-width="1.5"/>
+          <circle cx="23" cy="29" r="2.7" fill="#D9534F" class="eye-glow"/>
+          <circle cx="41" cy="29" r="2.7" fill="#D9534F" class="eye-glow"/>
+          <polygon points="32,31 25,44 32,55 39,44" fill="#2A2438" stroke="#E6DEC8" stroke-width="1.3"/>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between">
+          <span class="mono text-[10px] text-[#D9534F] font-bold tracking-wider">APOLLO // DIAGNÓSTICO DE DATOS</span>
+          <button onclick="nextInsight()" class="mono text-[10px] text-[#C89D66] px-1.5 py-0.5 border border-[#3B334A]">SIGUIENTE ↻</button>
+        </div>
+        <p id="apollo-msg" class="mono text-[11px] text-[#E6DEC8] mt-1 leading-snug"></p>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="relative z-10 max-w-xl mx-auto px-4 pt-4 space-y-5">
+
+    <!-- VISTA 1: TABLERO PRINCIPAL -->
+    <section id="view-dashboard" class="space-y-4">
+      <!-- BARRA ACCESO RÁPIDO LIMPIAR DEMO -->
+      <div id="demo-banner" class="panel-flat p-2.5 flex items-center justify-between bg-[#211D2A]/90">
+        <span class="mono text-[10px] text-[#C89D66]">MODO: DATOS DE EJEMPLO CARGADOS</span>
+        <button onclick="resetToZero()" class="mono text-[10px] px-2.5 py-1 bg-[#D9534F] text-[#0B0A0E] font-bold">
+          LIMPIAR DATOS DEMO
+        </button>
       </div>
 
-      <!-- #1 TOP PRIORITY CARD: LIMPIAR DATOS DEMO (INICIAR DE CERO) -->
-      <div class="cyber-card p-4 border-l-2 border-l-eclipse bg-charcoal">
-        <div class="flex items-center justify-between mb-2">
-          <span class="font-mono text-xs font-bold text-terracotta uppercase flex items-center gap-1.5">
-            <i data-lucide="trash-2" class="w-4 h-4 text-eclipse"></i>
-            1. LIMPIAR DATOS DEMO E INICIAR DE CERO
-          </span>
-          <span class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-eclipse/60 text-terracotta">ACCIÓN INMEDIATA</span>
+      <!-- KPIs -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="panel p-3">
+          <p class="mono text-[10px] text-[#9E96A8]">TOTAL DEL MES</p>
+          <p id="kpi-total" class="mono text-base font-bold text-[#E6DEC8] mt-1">$0</p>
+          <p id="kpi-sub-total" class="mono text-[9px] text-[#9E96A8] mt-0.5">0 CARGOS</p>
         </div>
-        <p class="text-xs text-ash leading-relaxed mb-3">
-          Elimina todas las tarjetas, compras, terceros y servicios de ejemplo para dejar la aplicación completamente limpia y empezar a capturar tus cuentas reales.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <button onclick="openWipeConfirmModal()" class="cyber-btn w-full bg-eclipse hover:bg-terracotta text-abyss font-mono text-xs font-bold py-3 px-3 flex items-center justify-center gap-2">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-            <span>LIMPIAR DATOS DEMO (INICIAR DE CERO)</span>
-          </button>
-          <button onclick="resetToDemoData()" class="cyber-btn w-full bg-abyss border border-mist text-ash hover:text-sand font-mono text-xs py-3 px-3 flex items-center justify-center gap-2">
-            <i data-lucide="rotate-ccw" class="w-4 h-4 text-ochre"></i>
-            <span>RESTAURAR DATOS DEMO DE EJEMPLO</span>
-          </button>
+        <div class="panel p-3">
+          <p class="mono text-[10px] text-[#D9534F]">POR LIQUIDAR</p>
+          <p id="kpi-pending" class="mono text-base font-bold text-[#D9534F] mt-1">$0</p>
+          <p id="kpi-paid" class="mono text-[9px] text-[#5FA882] mt-0.5">PAGADO: $0</p>
+        </div>
+        <div class="panel p-3">
+          <p class="mono text-[10px] text-[#C89D66]">PRÓXIMO MES</p>
+          <p id="kpi-next" class="mono text-base font-bold text-[#C89D66] mt-1">$0</p>
+          <p class="mono text-[9px] text-[#9E96A8] mt-0.5">POST-CORTE + MSI</p>
         </div>
       </div>
 
-      <!-- Export Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <!-- JSON Export -->
-        <div class="cyber-card p-4 border-l-2 border-l-eclipse flex flex-col justify-between">
+      <!-- 1. CHECKLIST DE PAGOS DEL MES -->
+      <div class="panel p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
           <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-xs font-bold text-sand">2. RESPALDO TOTAL (.JSON)</span>
-              <i data-lucide="file-json" class="w-4 h-4 text-terracotta"></i>
-            </div>
-            <p class="text-xs text-ash leading-relaxed mb-4">
-              Descarga una copia exacta de todas tus tarjetas (crédito y débito), compras a meses/contado, apoyos de terceros, servicios, tipos de producto y checkmarks. Ideal para cambiar de iPhone o guardar en la app <strong class="text-sand">Archivos</strong>.
-            </p>
+            <h2 class="mono text-xs font-bold text-[#E6DEC8] tracking-wider">1. PAGOS DEL MES (CHECKLIST)</h2>
+            <p class="mono text-[10px] text-[#9E96A8]">TDC AL CORTE, DÉBITO (TDD), TERCEROS Y SERVICIOS</p>
           </div>
-          <button onclick="exportDatabaseJSON()" class="cyber-btn w-full bg-eclipse text-abyss font-mono text-xs font-bold py-2.5 flex items-center justify-center gap-2">
-            <i data-lucide="download" class="w-4 h-4"></i> DESCARGAR RESPALDO .JSON
-          </button>
+          <button onclick="resetMonthChecks()" class="btn-ghost text-[10px] px-2 py-1">↺ REINICIAR CHECKS</button>
         </div>
+        <div class="w-full h-1.5 bg-[#0B0A0E] border border-[#3B334A] overflow-hidden">
+          <div id="bar-progress" class="h-full bg-[#5FA882] transition-all duration-300" style="width:0%"></div>
+        </div>
+        <div id="list-checklist" class="space-y-2"></div>
+      </div>
 
-        <!-- CSV Export -->
-        <div class="cyber-card p-4 border-l-2 border-l-ochre flex flex-col justify-between">
+      <!-- 2. GASTOS PARA EL PRÓXIMO MES -->
+      <div class="panel p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between">
           <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-xs font-bold text-sand">3. REPORTE EXCEL (.CSV)</span>
-              <i data-lucide="table" class="w-4 h-4 text-ochre"></i>
-            </div>
-            <p class="text-xs text-ash leading-relaxed mb-4">
-              Genera una tabla estructurada con codificación UTF-8 lista para abrirse en Excel o Numbers con el desglose completo de movimientos, tipo de tarjeta (TDC/TDD), ciclo, establecimiento y tipo de producto/servicio.
-            </p>
+            <h2 class="mono text-xs font-bold text-[#C89D66] tracking-wider">2. GASTOS PARA EL PRÓXIMO MES</h2>
+            <p class="mono text-[10px] text-[#9E96A8]">COMPRAS POST-CORTE + MENSUALIDADES MSI CONTINUAS</p>
           </div>
-          <button onclick="exportDatabaseCSV()" class="cyber-btn w-full bg-ochre text-abyss font-mono text-xs font-bold py-2.5 flex items-center justify-center gap-2">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> DESCARGAR TABLA .CSV
-          </button>
+          <span id="badge-next-total" class="tag text-[#C89D66]">$0</span>
         </div>
+        <div id="list-next-month" class="space-y-1.5"></div>
       </div>
 
-      <!-- Import / Restore Section -->
-      <div class="cyber-card p-4 border-l-2 border-l-steel">
-        <div class="flex items-center justify-between mb-2">
-          <span class="font-mono text-xs font-bold text-sand uppercase">4. RESTAURAR / ACTUALIZAR DESDE ARCHIVO .JSON</span>
-          <i data-lucide="upload-cloud" class="w-4 h-4 text-ash"></i>
-        </div>
-        <p class="text-xs text-ash leading-relaxed mb-3">
-          Selecciona un archivo <code class="text-terracotta">.json</code> previamente descargado desde tu iPhone para restaurar instantáneamente todas tus cuentas y registros.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-2.5">
-          <label class="cyber-btn flex-1 bg-panel border border-mist hover:border-sand text-sand font-mono text-xs py-2.5 px-3 text-center cursor-pointer flex items-center justify-center gap-2">
-            <i data-lucide="folder-open" class="w-4 h-4 text-terracotta"></i>
-            <span>SELECCIONAR ARCHIVO .JSON</span>
-            <input type="file" id="jsonImportInput" accept=".json,application/json" class="hidden" onchange="handleImportJSON(event)" />
-          </label>
-        </div>
-      </div>
-
-      <!-- GitHub Pages & Service Worker (sw.js) Generator Panel -->
-      <div class="cyber-card p-4 border-l-2 border-l-sage">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <i data-lucide="wifi-off" class="w-4 h-4 text-sage"></i>
-            <span class="font-mono text-xs font-bold text-sage uppercase">5. MOTOR OFFLINE // GITHUB PAGES (SW.JS V3)</span>
+      <!-- 3. TABLERO POR ESTABLECIMIENTO -->
+      <div class="panel p-3.5 space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h2 class="mono text-xs font-bold text-[#E6DEC8] tracking-wider">3. TABLERO POR ESTABLECIMIENTO</h2>
+            <p class="mono text-[10px] text-[#9E96A8]">CONCENTRACIÓN EN TIENDAS Y APLICACIONES</p>
           </div>
-          <span id="swRegistrationStatus" class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-sage/60 text-sage">CACHÉ ACTIVA</span>
+          <div class="flex gap-1">
+            <button onclick="setFilter('merchant','CURRENT')" id="f-m-CURRENT" class="mono text-[10px] px-2 py-0.5 border border-[#D9534F] bg-[#D9534F]/20">MES</button>
+            <button onclick="setFilter('merchant','NEXT')" id="f-m-NEXT" class="mono text-[10px] px-2 py-0.5 border border-[#3B334A]">POST-CORTE</button>
+            <button onclick="setFilter('merchant','ALL')" id="f-m-ALL" class="mono text-[10px] px-2 py-0.5 border border-[#3B334A]">GLOBAL</button>
+          </div>
         </div>
-        <p class="text-xs text-ash leading-relaxed mb-3">
-          Si actualizaste tu código en GitHub Pages y tu iPhone sigue mostrando una versión anterior guardada en memoria, toca <strong class="text-sand">Forzar Actualización de Caché</strong> o descarga el archivo <code class="text-sand">sw.js</code> actualizado.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <button onclick="forceRefreshAppCache()" class="cyber-btn w-full bg-panel border border-sage text-sage hover:bg-sage hover:text-abyss font-mono text-xs font-bold py-2.5 px-3 flex items-center justify-center gap-2">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i> FORZAR ACTUALIZACIÓN DE CACHÉ
-          </button>
-          <button onclick="downloadServiceWorkerFile()" class="cyber-btn w-full bg-sage text-abyss font-mono text-xs font-bold py-2.5 px-3 flex items-center justify-center gap-2">
-            <i data-lucide="file-code" class="w-4 h-4"></i> DESCARGAR ARCHIVO SW.JS
-          </button>
+        <div id="list-merchants" class="space-y-2"></div>
+      </div>
+
+      <!-- 4. TABLERO POR TIPO DE PRODUCTO / SERVICIO -->
+      <div class="panel p-3.5 space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h2 class="mono text-xs font-bold text-[#E6DEC8] tracking-wider">4. TABLERO POR TIPO DE PRODUCTO / SERVICIO</h2>
+            <p class="mono text-[10px] text-[#9E96A8]">DESGLOSE POR CATEGORÍA DE CONSUMO</p>
+          </div>
+          <div class="flex gap-1">
+            <button onclick="setFilter('category','CURRENT')" id="f-c-CURRENT" class="mono text-[10px] px-2 py-0.5 border border-[#D9534F] bg-[#D9534F]/20">MES</button>
+            <button onclick="setFilter('category','NEXT')" id="f-c-NEXT" class="mono text-[10px] px-2 py-0.5 border border-[#3B334A]">POST-CORTE</button>
+            <button onclick="setFilter('category','ALL')" id="f-c-ALL" class="mono text-[10px] px-2 py-0.5 border border-[#3B334A]">GLOBAL</button>
+          </div>
+        </div>
+        <div id="list-categories" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: TARJETAS (TDC Y TDD) -->
+    <section id="view-cards" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="mono text-sm font-bold text-[#E6DEC8]">TARJETAS (CRÉDITO TDC / DÉBITO TDD)</h2>
+          <p class="mono text-[10px] text-[#9E96A8]">CORTES, COMPRAS MSI, CONTADO Y DÉBITO INMEDIATO</p>
+        </div>
+        <div class="flex gap-1.5">
+          <button onclick="openModal('modal-card')" class="btn-ghost text-xs px-2.5 py-1.5">+ TARJETA</button>
+          <button onclick="openModal('modal-tx')" class="btn-red text-xs px-2.5 py-1.5">+ COMPRA</button>
+        </div>
+      </div>
+      <div id="cards-container" class="space-y-4"></div>
+    </section>
+
+    <!-- VISTA 3: TERCEROS / MISCELÁNEO -->
+    <section id="view-misc" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="mono text-sm font-bold text-[#E6DEC8]">MISCELÁNEO // PAGOS A TERCEROS</h2>
+          <p class="mono text-[10px] text-[#9E96A8]">APOYOS CON TDC AJENA O PRÉSTAMOS PERSONALES</p>
+        </div>
+        <button onclick="openModal('modal-misc')" class="btn-red text-xs px-3 py-1.5">+ TERCERO</button>
+      </div>
+      <div id="misc-container" class="space-y-3"></div>
+    </section>
+
+    <!-- VISTA 4: SERVICIOS -->
+    <section id="view-services" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="mono text-sm font-bold text-[#E6DEC8]">SERVICIOS Y SUSCRIPCIONES</h2>
+          <p class="mono text-[10px] text-[#9E96A8]">CARGOS DIRECTOS O DOMICILIADOS A TDC / TDD</p>
+        </div>
+        <button onclick="openModal('modal-service')" class="btn-red text-xs px-3 py-1.5">+ SERVICIO</button>
+      </div>
+      <div id="services-container" class="space-y-3"></div>
+    </section>
+
+    <!-- VISTA 5: RESPALDO Y SISTEMA -->
+    <section id="view-backup" class="hidden space-y-4">
+      <div class="panel p-4 space-y-3 border-[#D9534F]">
+        <h2 class="mono text-xs font-bold text-[#D9534F]">1. REINICIO Y LIMPIEZA DE DATOS</h2>
+        <p class="mono text-[11px] text-[#9E96A8]">Borra las tarjetas y compras de ejemplo para capturar tus datos reales desde cero.</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="resetToZero()" class="btn-red text-xs py-2.5">🗑️ INICIAR DE CERO</button>
+          <button onclick="restoreDemoData()" class="btn-ghost text-xs py-2.5">CARGAR DEMO</button>
         </div>
       </div>
 
-      <!-- iOS PWA Installation Guide -->
-      <div class="cyber-card p-4 border-l-2 border-l-ochre">
-        <h3 class="font-mono text-xs font-bold text-ochre uppercase mb-2 flex items-center gap-1.5">
-          <i data-lucide="smartphone" class="w-4 h-4"></i> INSTALACIÓN OFFLINE EN TU IPHONE (IOS SAFARI)
-        </h3>
-        <ol class="text-xs text-ash space-y-1.5 list-decimal list-inside font-mono">
-          <li>Sube este <strong class="text-sand">index.html</strong> y el archivo <strong class="text-sand">sw.js</strong> a tu repositorio de GitHub Pages.</li>
-          <li>Abre tu enlace <code class="text-sand">https://tu-usuario.github.io/apollo/</code> en <strong class="text-sand">Safari</strong> desde tu iPhone.</li>
-          <li>Toca <strong class="text-sand">Compartir</strong> y selecciona <strong class="text-sand">"Agregar a la pantalla de inicio"</strong>.</li>
-          <li>Si ya tenías instalada una versión anterior en tu iPhone, toca arriba en <strong class="text-sage">"FORZAR ACTUALIZACIÓN DE CACHÉ"</strong> para cargar el nuevo diseño al instante.</li>
-        </ol>
+      <div class="panel p-4 space-y-3">
+        <h2 class="mono text-xs font-bold text-[#E6DEC8]">2. EXPORTAR RESPALDO (.JSON Y .CSV)</h2>
+        <p class="mono text-[11px] text-[#9E96A8]">Guarda tu archivo en la app Archivos de tu iPhone para restaurar al cambiar de teléfono o abrir en Excel.</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="exportJSON()" class="btn-red text-xs py-2.5">⬇ EXPORTAR .JSON</button>
+          <button onclick="exportCSV()" class="btn-ghost text-xs py-2.5">⬇ EXPORTAR .CSV</button>
+        </div>
+      </div>
+
+      <div class="panel p-4 space-y-3">
+        <h2 class="mono text-xs font-bold text-[#C89D66]">3. RESTAURAR DESDE ARCHIVO .JSON</h2>
+        <input type="file" id="json-input" accept=".json" onchange="importJSON(event)" class="inp text-xs" />
+      </div>
+
+      <div class="panel p-4 space-y-3">
+        <h2 class="mono text-xs font-bold text-[#5FA882]">4. MODO OFFLINE (GITHUB PAGES)</h2>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="downloadSW()" class="btn-ghost text-xs py-2.5 text-[#5FA882]">⬇ DESCARGAR SW.JS</button>
+          <button onclick="forceUpdateCache()" class="btn-ghost text-xs py-2.5">↻ ACTUALIZAR CACHÉ</button>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL 5: CONFIRM WIPE DATABASE (START FROM ZERO) -->
-  <div id="modalWipeConfirm" class="ios-modal-overlay fixed inset-0 z-50 bg-abyss/90 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="cyber-card w-full max-w-sm p-4 bg-charcoal border border-eclipse my-auto">
-      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
-        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">CONFIRMAR REINICIO DE CERO</h3>
-        <button onclick="closeModal('modalWipeConfirm')" class="text-ash hover:text-sand font-mono text-sm px-2 py-1">✕</button>
+  <!-- NAVEGACIÓN INFERIOR SEGURA PARA IPHONE -->
+  <nav class="fixed bottom-0 inset-x-0 z-30 bg-[#0B0A0E]/95 backdrop-blur-md border-t border-[#3B334A] safe-bottom pt-2 px-2">
+    <div class="max-w-xl mx-auto grid grid-cols-5 gap-1">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="mono text-[10px] py-2 border border-[#D9534F] bg-[#D9534F]/15 text-[#E6DEC8] font-bold">TABLERO</button>
+      <button onclick="switchTab('cards')" id="tab-cards" class="mono text-[10px] py-2 border border-transparent text-[#9E96A8]">TARJETAS</button>
+      <button onclick="switchTab('misc')" id="tab-misc" class="mono text-[10px] py-2 border border-transparent text-[#9E96A8]">TERCEROS</button>
+      <button onclick="switchTab('services')" id="tab-services" class="mono text-[10px] py-2 border border-transparent text-[#9E96A8]">SERVICIOS</button>
+      <button onclick="switchTab('backup')" id="tab-backup" class="mono text-[10px] py-2 border border-transparent text-[#9E96A8]">RESPALDO</button>
+    </div>
+  </nav>
+
+  <!-- MODAL: NUEVA TARJETA -->
+  <div id="modal-card" class="hidden fixed inset-0 z-50 bg-black/85 overflow-y-auto px-4 modal-safe">
+    <div class="max-w-md mx-auto panel p-4 space-y-3">
+      <div class="flex justify-between items-center border-b border-[#3B334A] pb-2">
+        <h3 class="mono text-xs font-bold text-[#E6DEC8]">REGISTRAR TARJETA (TDC / TDD)</h3>
+        <button onclick="closeModal('modal-card')" class="mono text-xs text-[#D9534F]">[CERRAR ✕]</button>
       </div>
-      <p class="font-mono text-xs text-sand leading-relaxed mb-4">
-        ¿Confirmas borrar todos los datos demo (tarjetas, compras, terceros y servicios) e iniciar tu terminal en cero?
-      </p>
-      <div class="flex gap-2">
-        <button type="button" onclick="closeModal('modalWipeConfirm')" class="flex-1 py-2.5 bg-panel text-ash font-mono text-xs">CANCELAR</button>
-        <button type="button" onclick="confirmWipeDatabase()" class="cyber-btn flex-1 py-2.5 bg-eclipse text-abyss font-mono text-xs font-bold">SÍ, DEJAR EN CERO</button>
+      <div class="space-y-2.5">
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">TIPO DE TARJETA</label>
+          <select id="c-kind" onchange="toggleCardKindFields()" class="inp">
+            <option value="TDC">TDC // TARJETA DE CRÉDITO (CORTE MENSUAL)</option>
+            <option value="TDD">TDD // TARJETA DE DÉBITO (SE LIQUIDA AL INSTANTE)</option>
+          </select>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">BANCO / ALIAS</label>
+          <input id="c-name" type="text" placeholder="EJ. BBVA AZUL / NU / SANTANDER" class="inp" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">ÚLTIMOS 4 DÍGITOS</label>
+            <input id="c-last4" type="text" maxlength="4" placeholder="4821" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">LÍMITE / PRESUPUESTO ($)</label>
+            <input id="c-limit" type="number" placeholder="25000" class="inp" />
+          </div>
+        </div>
+        <div id="c-credit-days" class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">DÍA DE CORTE (1-31)</label>
+            <input id="c-cut" type="number" min="1" max="31" placeholder="8" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">DÍA LÍMITE PAGO (1-31)</label>
+            <input id="c-due" type="number" min="1" max="31" placeholder="28" class="inp" />
+          </div>
+        </div>
+        <button onclick="saveCard()" class="btn-red w-full py-2.5 text-xs">GUARDAR TARJETA</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== MODALS ==================== -->
-
-  <!-- MODAL 1: ADD CREDIT OR DEBIT CARD -->
-  <div id="modalAddCard" class="ios-modal-overlay fixed inset-0 z-50 bg-abyss/90 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-3 sm:p-4">
-    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-eclipse my-auto">
-      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
-        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">REGISTRAR TARJETA (CRÉDITO TDC / DÉBITO TDD)</h3>
-        <button onclick="closeModal('modalAddCard')" class="text-ash hover:text-sand font-mono text-sm px-2 py-1">✕</button>
+  <!-- MODAL: NUEVA COMPRA EN TARJETA -->
+  <div id="modal-tx" class="hidden fixed inset-0 z-50 bg-black/85 overflow-y-auto px-4 modal-safe">
+    <div class="max-w-md mx-auto panel p-4 space-y-3">
+      <div class="flex justify-between items-center border-b border-[#3B334A] pb-2">
+        <h3 class="mono text-xs font-bold text-[#E6DEC8]">REGISTRAR COMPRA EN TARJETA</h3>
+        <button onclick="closeModal('modal-tx')" class="mono text-xs text-[#D9534F]">[CERRAR ✕]</button>
       </div>
-<!-- ... existing code ... -->
-  <!-- MODAL 2: ADD CHARGE TO CARD (TDC OR TDD) -->
-  <div id="modalAddCharge" class="ios-modal-overlay fixed inset-0 z-50 bg-abyss/90 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-3 sm:p-4">
-    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-eclipse my-auto">
-      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
-        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">REGISTRAR COMPRA EN TARJETA</h3>
-        <button onclick="closeModal('modalAddCharge')" class="text-ash hover:text-sand font-mono text-sm px-2 py-1">✕</button>
+      <div class="space-y-2.5">
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">TARJETA</label>
+          <select id="tx-card" class="inp"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">ESTABLECIMIENTO / APP</label>
+            <input id="tx-merchant" type="text" placeholder="AMAZON / OXXO / KFC" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">DÍA DE COMPRA (1-31)</label>
+            <input id="tx-day" type="number" min="1" max="31" placeholder="5" class="inp" />
+          </div>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">TIPO DE PRODUCTO / SERVICIO</label>
+          <select id="tx-category" class="inp">
+            <option value="ALIMENTOS Y BEBIDAS">ALIMENTOS Y BEBIDAS</option>
+            <option value="COLECCIONABLES / HOBBIES">COLECCIONABLES / HOBBIES</option>
+            <option value="ELECTRÓNICA / HARDWARE">ELECTRÓNICA / HARDWARE</option>
+            <option value="ROPA / ACCESORIOS / PERFUMERÍA">ROPA / ACCESORIOS / PERFUMERÍA</option>
+            <option value="SALUD / GYM / DEPORTE">SALUD / GYM / DEPORTE</option>
+            <option value="TRANSPORTE / MOVILIDAD">TRANSPORTE / MOVILIDAD</option>
+            <option value="ENTRETENIMIENTO / LIBROS">ENTRETENIMIENTO / LIBROS</option>
+            <option value="SUSCRIPCIONES / SOFTWARE">SUSCRIPCIONES / SOFTWARE</option>
+            <option value="HOGAR / SERVICIOS BÁSICOS">HOGAR / SERVICIOS BÁSICOS</option>
+            <option value="OTROS">OTROS</option>
+          </select>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">CONCEPTO / ARTÍCULO</label>
+          <input id="tx-concept" type="text" placeholder="DESCRIPCIÓN DEL GASTO" class="inp" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">MONTO TOTAL ($)</label>
+            <input id="tx-amount" type="number" step="0.01" placeholder="1200" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">MODALIDAD</label>
+            <select id="tx-mode" onchange="toggleMsiFields()" class="inp">
+              <option value="CONTADO">CONTADO (1 PAGO)</option>
+              <option value="MSI">MESES SIN INTERESES (MSI)</option>
+            </select>
+          </div>
+        </div>
+        <div id="tx-msi-box" class="hidden grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">TOTAL MESES (MSI)</label>
+            <input id="tx-months-total" type="number" value="3" min="2" max="48" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">MES ACTUAL A PAGAR</label>
+            <input id="tx-months-curr" type="number" value="1" min="1" max="48" class="inp" />
+          </div>
+        </div>
+        <button onclick="saveTx()" class="btn-red w-full py-2.5 text-xs">GUARDAR COMPRA</button>
       </div>
-<!-- ... existing code ... -->
-  <!-- MODAL 3: ADD THIRD PARTY / MISCELLANEOUS -->
-  <div id="modalAddThirdParty" class="ios-modal-overlay fixed inset-0 z-50 bg-abyss/90 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-3 sm:p-4">
-    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-ochre my-auto">
-      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
-        <h3 class="font-mono text-xs font-bold text-ochre uppercase">REGISTRAR PAGO A TERCERO / APOYO TDC</h3>
-        <button onclick="closeModal('modalAddThirdParty')" class="text-ash hover:text-sand font-mono text-sm px-2 py-1">✕</button>
+    </div>
+  </div>
+
+  <!-- MODAL: NUEVO PAGO A TERCERO -->
+  <div id="modal-misc" class="hidden fixed inset-0 z-50 bg-black/85 overflow-y-auto px-4 modal-safe">
+    <div class="max-w-md mx-auto panel p-4 space-y-3">
+      <div class="flex justify-between items-center border-b border-[#3B334A] pb-2">
+        <h3 class="mono text-xs font-bold text-[#E6DEC8]">REGISTRAR PAGO A TERCERO</h3>
+        <button onclick="closeModal('modal-misc')" class="mono text-xs text-[#D9534F]">[CERRAR ✕]</button>
       </div>
-<!-- ... existing code ... -->
-  <!-- MODAL 4: ADD RECURRING SERVICE -->
-  <div id="modalAddService" class="ios-modal-overlay fixed inset-0 z-50 bg-abyss/90 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-3 sm:p-4">
-    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-steel my-auto">
-      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
-        <h3 class="font-mono text-xs font-bold text-sand uppercase">REGISTRAR SERVICIO / SUSCRIPCIÓN</h3>
-        <button onclick="closeModal('modalAddService')" class="text-ash hover:text-sand font-mono text-sm px-2 py-1">✕</button>
+      <div class="space-y-2.5">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">PERSONA / BENEFICIARIO</label>
+            <input id="m-person" type="text" placeholder="NOMBRE" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">BANCO / CLABE DESTINO</label>
+            <input id="m-bank" type="text" placeholder="BBVA / NU" class="inp" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">ESTABLECIMIENTO ORIGEN</label>
+            <input id="m-merchant" type="text" placeholder="MERCADO LIBRE" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">DÍA ACORDADO DE PAGO</label>
+            <input id="m-due" type="number" min="1" max="31" placeholder="15" class="inp" />
+          </div>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">TIPO DE PRODUCTO / SERVICIO</label>
+          <input id="m-category" type="text" value="COLECCIONABLES / HOBBIES" class="inp" />
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">CONCEPTO / MOTIVO DEL APOYO</label>
+          <input id="m-concept" type="text" placeholder="PRÉSTAMO TDC / COMPRA CONJUNTA" class="inp" />
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">PAGO MENSUAL ($)</label>
+            <input id="m-amount" type="number" step="0.01" placeholder="850" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">PAGO ACTUAL</label>
+            <input id="m-curr" type="number" value="1" min="1" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">TOTAL PAGOS</label>
+            <input id="m-total" type="number" value="1" min="1" class="inp" />
+          </div>
+        </div>
+        <button onclick="saveMisc()" class="btn-red w-full py-2.5 text-xs">GUARDAR TERCERO</button>
       </div>
-<!-- ... existing code ... -->
-  <!-- ==================== BOTTOM NAVIGATION BAR (PWA NATIVE FEEL) ==================== -->
-  <nav class="ios-bottom-nav fixed bottom-0 left-0 right-0 z-40 bg-abyss/95 backdrop-blur-md border-t border-mist">
-    <div class="max-w-3xl mx-auto grid grid-cols-5">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active py-2.5 flex flex-col items-center justify-center gap-1 text-ash transition-colors">
-        <i data-lucide="layout-Grid" class="w-4 h-4"></i>
-        <span class="font-mono text-[9px] tracking-wider">TABLERO</span>
-      </button>
-<!-- ... existing code ... -->
-    function getServiceWorkerSourceCode() {
-      return `const CACHE_NAME = 'apollo-finanzas-v3';
-const ASSETS = [
-  './',
-  './index.html',
-  'https://cdn.tailwindcss.com',
-  'https://unpkg.com/lucide@latest'
-];
+    </div>
+  </div>
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(() => {})
-  );
-  self.skipWaiting();
-});
+  <!-- MODAL: NUEVO SERVICIO -->
+  <div id="modal-service" class="hidden fixed inset-0 z-50 bg-black/85 overflow-y-auto px-4 modal-safe">
+    <div class="max-w-md mx-auto panel p-4 space-y-3">
+      <div class="flex justify-between items-center border-b border-[#3B334A] pb-2">
+        <h3 class="mono text-xs font-bold text-[#E6DEC8]">REGISTRAR SERVICIO / SUSCRIPCIÓN</h3>
+        <button onclick="closeModal('modal-service')" class="mono text-xs text-[#D9534F]">[CERRAR ✕]</button>
+      </div>
+      <div class="space-y-2.5">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">SERVICIO / PLATAFORMA</label>
+            <input id="s-name" type="text" placeholder="SMART FIT / GEMINI PRO" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">ID / REFERENCIA</label>
+            <input id="s-ref" type="text" placeholder="CONTRATO / CORREO" class="inp" />
+          </div>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">TIPO DE PRODUCTO / SERVICIO</label>
+          <select id="s-category" class="inp">
+            <option value="SUSCRIPCIONES / SOFTWARE">SUSCRIPCIONES / SOFTWARE</option>
+            <option value="SALUD / GYM / DEPORTE">SALUD / GYM / DEPORTE</option>
+            <option value="HOGAR / SERVICIOS BÁSICOS">HOGAR / SERVICIOS BÁSICOS</option>
+            <option value="ENTRETENIMIENTO / LIBROS">ENTRETENIMIENTO / LIBROS</option>
+            <option value="TRANSPORTE / MOVILIDAD">TRANSPORTE / MOVILIDAD</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">COSTO MENSUAL ($)</label>
+            <input id="s-amount" type="number" step="0.01" placeholder="399" class="inp" />
+          </div>
+          <div>
+            <label class="mono text-[10px] text-[#9E96A8]">DÍA DE COBRO (1-31)</label>
+            <input id="s-day" type="number" min="1" max="31" placeholder="10" class="inp" />
+          </div>
+        </div>
+        <div>
+          <label class="mono text-[10px] text-[#9E96A8]">MÉTODO DE COBRO</label>
+          <select id="s-card" class="inp"></select>
+        </div>
+        <button onclick="saveService()" class="btn-red w-full py-2.5 text-xs">GUARDAR SERVICIO</button>
+      </div>
+    </div>
+  </div>
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
-    )
-  );
-  self.clients.claim();
-});
+  <!-- MODAL: SELECTOR RÁPIDO (+ REGISTRO) -->
+  <div id="modal-quick" class="hidden fixed inset-0 z-50 bg-black/85 flex items-center justify-center px-4">
+    <div class="w-full max-w-sm panel p-4 space-y-2.5">
+      <div class="flex justify-between items-center border-b border-[#3B334A] pb-2">
+        <span class="mono text-xs font-bold text-[#E6DEC8]">NUEVO REGISTRO EN APOLLO</span>
+        <button onclick="closeModal('modal-quick')" class="mono text-xs text-[#D9534F]">[✕]</button>
+      </div>
+      <button onclick="closeModal('modal-quick');openModal('modal-tx')" class="btn-red w-full py-2.5 text-xs">+ COMPRA EN TARJETA (TDC / TDD)</button>
+      <button onclick="closeModal('modal-quick');openModal('modal-misc')" class="btn-ghost w-full py-2.5 text-xs">+ PAGO A TERCERO / MISCELÁNEO</button>
+      <button onclick="closeModal('modal-quick');openModal('modal-service')" class="btn-ghost w-full py-2.5 text-xs">+ SERVICIO / SUSCRIPCIÓN</button>
+      <button onclick="closeModal('modal-quick');openModal('modal-card')" class="btn-ghost w-full py-2.5 text-xs">+ AGREGAR NUEVA TARJETA</button>
+    </div>
+  </div>
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request)
-      .then((networkResponse) => {
-        if (e.request.method === 'GET') {
-          const cloned = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, cloned));
-        }
-        return networkResponse;
-      })
-      .catch(() => caches.match(e.request))
-  );
-});
-`;
+  <script>
+    const STORAGE_KEY = 'APOLLO_FIN_OS_V4';
+    let filters = { merchant: 'CURRENT', category: 'CURRENT' };
+    let insightIndex = 0;
+
+    function getDemoState() {
+      return {
+        isDemo: true,
+        checks: {},
+        cards: [
+          { id: 'c1', kind: 'TDC', name: 'BBVA AZUL', last4: '4821', limit: 28000, cutDay: 8, dueDay: 28 },
+          { id: 'c2', kind: 'TDC', name: 'NU CRÉDITO', last4: '9014', limit: 15000, cutDay: 18, dueDay: 3 },
+          { id: 'c3', kind: 'TDD', name: 'BBVA NÓMINA DÉBITO', last4: '3309', limit: 18000, cutDay: 31, dueDay: 1 }
+        ],
+        txs: [
+          { id: 't1', cardId: 'c1', merchant: 'AMAZON MX', category: 'COLECCIONABLES / HOBBIES', concept: 'BOOSTER BOX + CARPETA VAULT X', amount: 2400, purchaseDay: 5, mode: 'MSI', monthsTotal: 3, monthsCurr: 1 },
+          { id: 't2', cardId: 'c1', merchant: 'KFC', category: 'ALIMENTOS Y BEBIDAS', concept: 'COMBO CENA', amount: 345, purchaseDay: 6, mode: 'CONTADO', monthsTotal: 1, monthsCurr: 1 },
+          { id: 't3', cardId: 'c1', merchant: 'MERCADO LIBRE', category: 'ROPA / ACCESORIOS / PERFUMERÍA', concept: 'PERFUME LATTAFA KHAMRAH', amount: 980, purchaseDay: 14, mode: 'CONTADO', monthsTotal: 1, monthsCurr: 1 },
+          { id: 't4', cardId: 'c2', merchant: 'PANINI POINT', category: 'ENTRETENIMIENTO / LIBROS', concept: 'TOMOS MANGA EDICIÓN LUX', amount: 760, purchaseDay: 11, mode: 'CONTADO', monthsTotal: 1, monthsCurr: 1 },
+          { id: 't5', cardId: 'c3', merchant: 'SUPER SALADS', category: 'ALIMENTOS Y BEBIDAS', concept: 'COMIDA ENSALADA + PANINI', amount: 295, purchaseDay: 9, mode: 'CONTADO', monthsTotal: 1, monthsCurr: 1 }
+        ],
+        misc: [
+          { id: 'm1', person: 'CARLOS R.', bank: 'BBVA TRANSFERENCIA', merchant: 'LIVERPOOL', category: 'ELECTRÓNICA / HARDWARE', concept: 'MONITOR APOYO TDC', amount: 950, curr: 2, total: 4, dueDay: 15 }
+        ],
+        services: [
+          { id: 's1', name: 'SMART FIT', ref: 'MEMBRESÍA BLACK', category: 'SALUD / GYM / DEPORTE', amount: 599, day: 10, cardId: 'c1' },
+          { id: 's2', name: 'GEMINI PRO', ref: 'GOOGLE AI', category: 'SUSCRIPCIONES / SOFTWARE', amount: 395, day: 12, cardId: 'c2' },
+          { id: 's3', name: 'INTERNET FIBRA', ref: 'RECIBO HOGAR', category: 'HOGAR / SERVICIOS BÁSICOS', amount: 650, day: 20, cardId: 'DIRECT' }
+        ]
+      };
     }
 
-    async function forceRefreshAppCache() {
+    let state = loadState();
+
+    function loadState() {
       try {
-        if ('serviceWorker' in navigator) {
-          const registrations = await navigator.serviceWorker.getRegistrations();
-          for (const reg of registrations) {
-            await reg.unregister();
-          }
-        }
-        if ('caches' in window) {
-          const cacheNames = await caches.keys();
-          for (const name of cacheNames) {
-            await caches.delete(name);
-          }
-        }
-        showToast('CACHÉ LIMPIA // RECARGANDO VERSIÓN NUEVA...');
-        setTimeout(() => {
-          window.location.reload(true);
-        }, 700);
-      } catch (e) {
-        window.location.reload();
-      }
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return getDemoState();
     }
 
-    function downloadServiceWorkerFile() {
-<!-- ... existing code ... -->
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      renderAll();
+    }
+
+    const fmt = (n) => '$' + Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const up = (s) => String(s || '').trim().toUpperCase();
+
+    function isPostCut(tx, card) {
+      if (!card || card.kind === 'TDD') return false;
+      return Number(tx.purchaseDay) > Number(card.cutDay);
+    }
+
+    function txMonthlyQuote(tx) {
+      return tx.mode === 'MSI' ? (Number(tx.amount) / Number(tx.monthsTotal || 1)) : Number(tx.amount);
+    }
+
+    function computeModel() {
+      const checklist = [];
+      const nextMonthItems = [];
+      const breakdownItems = [];
+
+      state.cards.forEach(card => {
+        const isDebit = card.kind === 'TDD';
+        const cardTxs = state.txs.filter(t => t.cardId === card.id);
+        const cardServices = state.services.filter(s => s.cardId === card.id);
+
+        let currentCutSum = 0;
+        let currentItemsCount = 0;
+
+        cardTxs.forEach(tx => {
+          const quote = txMonthlyQuote(tx);
+          const post = isPostCut(tx, card);
+          if (!post) {
+            currentCutSum += quote;
+            currentItemsCount++;
+            breakdownItems.push({ merchant: tx.merchant, category: tx.category || 'OTROS', amount: quote, scope: 'CURRENT' });
+            if (tx.mode === 'MSI' && Number(tx.monthsCurr) < Number(tx.monthsTotal)) {
+              nextMonthItems.push({
+                title: `${card.name} // ${tx.merchant}`,
+                sub: `CONTINÚA MSI (${Number(tx.monthsCurr) + 1}/${tx.monthsTotal}) • ${tx.concept}`,
+                amount: quote,
+                tag: 'MSI CONTINUO'
+              });
+            }
+          } else {
+            nextMonthItems.push({
+              title: `${card.name} // ${tx.merchant}`,
+              sub: `COMPRA DÍA ${tx.purchaseDay} (CORTE DÍA ${card.cutDay}) • ${tx.concept}`,
+              amount: quote,
+              tag: 'POST-CORTE'
+            });
+            breakdownItems.push({ merchant: tx.merchant, category: tx.category || 'OTROS', amount: quote, scope: 'NEXT' });
+          }
+        });
+
+        cardServices.forEach(srv => {
+          currentCutSum += Number(srv.amount);
+          currentItemsCount++;
+          breakdownItems.push({ merchant: srv.name, category: srv.category || 'SUSCRIPCIONES / SOFTWARE', amount: Number(srv.amount), scope: 'CURRENT' });
+        });
+
+        if (currentCutSum > 0) {
+          const checkKey = 'CARD_' + card.id;
+          checklist.push({
+            key: checkKey,
+            title: `${card.name} (*${card.last4})`,
+            sub: isDebit
+              ? `TDD DÉBITO • ${currentItemsCount} CARGOS DESCONTADOS AL INSTANTE`
+              : `TDC CORTE DÍA ${card.cutDay} • LÍMITE PAGO DÍA ${card.dueDay} (${currentItemsCount} CARGOS)`,
+            amount: currentCutSum,
+            dueDay: isDebit ? 0 : Number(card.dueDay),
+            kind: card.kind,
+            autoPaid: isDebit,
+            paid: isDebit ? true : !!state.checks[checkKey]
+          });
+        }
+      });
+
+      state.misc.forEach(m => {
+        const key = 'MISC_' + m.id;
+        checklist.push({
+          key,
+          title: `TERCERO: ${m.person}`,
+          sub: `${m.merchant} • ${m.concept} (${m.curr}/${m.total}) • ${m.bank}`,
+          amount: Number(m.amount),
+          dueDay: Number(m.dueDay || 15),
+          kind: 'TERCERO',
+          autoPaid: false,
+          paid: !!state.checks[key]
+        });
+        breakdownItems.push({ merchant: m.merchant, category: m.category || 'OTROS', amount: Number(m.amount), scope: 'CURRENT' });
+        if (Number(m.curr) < Number(m.total)) {
+          nextMonthItems.push({
+            title: `TERCERO: ${m.person} (${m.merchant})`,
+            sub: `PARCIALIDAD ${Number(m.curr) + 1}/${m.total} • ${m.concept}`,
+            amount: Number(m.amount),
+            tag: 'TERCERO CONTINUO'
+          });
+        }
+      });
+
+      state.services.filter(s => s.cardId === 'DIRECT').forEach(srv => {
+        const key = 'SRV_' + srv.id;
+        checklist.push({
+          key,
+          title: `SERVICIO: ${srv.name}`,
+          sub: `PAGO DIRECTO DÍA ${srv.day} • REF: ${srv.ref}`,
+          amount: Number(srv.amount),
+          dueDay: Number(srv.day || 15),
+          kind: 'SERVICIO',
+          autoPaid: false,
+          paid: !!state.checks[key]
+        });
+        breakdownItems.push({ merchant: srv.name, category: srv.category || 'HOGAR / SERVICIOS BÁSICOS', amount: Number(srv.amount), scope: 'CURRENT' });
+      });
+
+      checklist.sort((a, b) => a.dueDay - b.dueDay);
+
+      const totalMonth = checklist.reduce((s, i) => s + i.amount, 0);
+      const totalPaid = checklist.filter(i => i.paid).reduce((s, i) => s + i.amount, 0);
+      const totalPending = Math.max(0, totalMonth - totalPaid);
+      const totalNext = nextMonthItems.reduce((s, i) => s + i.amount, 0);
+
+      return { checklist, nextMonthItems, breakdownItems, totalMonth, totalPaid, totalPending, totalNext };
+    }
+
+    function toggleCheck(key, autoPaid) {
+      if (autoPaid) return;
+      state.checks[key] = !state.checks[key];
+      saveState();
+    }
+
+    function resetMonthChecks() {
+      state.checks = {};
+      saveState();
+    }
+
+    function setFilter(type, val) {
+      filters[type] = val;
+      ['CURRENT', 'NEXT', 'ALL'].forEach(k => {
+        const btn = document.getElementById(`f-${type === 'merchant' ? 'm' : 'c'}-${k}`);
+        if (btn) {
+          btn.className = k === val
+            ? 'mono text-[10px] px-2 py-0.5 border border-[#D9534F] bg-[#D9534F]/20 text-[#E6DEC8]'
+            : 'mono text-[10px] px-2 py-0.5 border border-[#3B334A] text-[#9E96A8]';
+        }
+      });
+      renderAll();
+    }
+
+    function generateInsights(m) {
+      const list = [];
+      const pct = m.totalMonth > 0 ? Math.round((m.totalPaid / m.totalMonth) * 100) : 0;
+      list.push(`AVANCE DE LIQUIDACIÓN MENSUAL: ${pct}% CUBIERTO (${fmt(m.totalPaid)}) // SALDO PENDIENTE POR LIQUIDAR: ${fmt(m.totalPending)}.`);
+      list.push(`CARGA COMPROMETIDA PARA EL PRÓXIMO MES: ${fmt(m.totalNext)} ENTRE COMPRAS POST-CORTE Y MENSUALIDADES MSI ACTIVAS.`);
+
+      const byCat = {};
+      m.breakdownItems.filter(i => i.scope === 'CURRENT').forEach(i => { byCat[i.category] = (byCat[i.category] || 0) + i.amount; });
+      const topCat = Object.entries(byCat).sort((a, b) => b[1] - a[1])[0];
+      if (topCat) {
+        const catPct = m.totalMonth > 0 ? Math.round((topCat[1] / m.totalMonth) * 100) : 0;
+        list.push(`MAYOR CONCENTRACIÓN POR TIPO DE PRODUCTO: ${topCat[0]} CON ${fmt(topCat[1])} (${catPct}% DEL MES).`);
+      }
+
+      const tddSum = m.checklist.filter(i => i.kind === 'TDD').reduce((s, i) => s + i.amount, 0);
+      const tdcSum = m.checklist.filter(i => i.kind === 'TDC').reduce((s, i) => s + i.amount, 0);
+      list.push(`BALANCE CRÉDITO VS DÉBITO ESTE MES: TDC ${fmt(tdcSum)} // TDD (LIQUIDADO AL INSTANTE) ${fmt(tddSum)}.`);
+      return list;
+    }
+
+    function nextInsight() {
+      const m = computeModel();
+      const insights = generateInsights(m);
+      insightIndex = (insightIndex + 1) % insights.length;
+      document.getElementById('apollo-msg').textContent = insights[insightIndex];
+    }
+
+    function renderGroupBars(items, keyName, scopeFilter, containerId) {
+      const filtered = items.filter(i => scopeFilter === 'ALL' ? true : i.scope === scopeFilter);
+      const map = {};
+      filtered.forEach(i => {
+        const k = up(i[keyName] || 'OTROS');
+        map[k] = (map[k] || 0) + i.amount;
+      });
+      const entries = Object.entries(map).sort((a, b) => b[1] - a[1]);
+      const sum = entries.reduce((s, e) => s + e[1], 0);
+      const el = document.getElementById(containerId);
+
+      if (!entries.length) {
+        el.innerHTML = `<p class="mono text-[11px] text-[#9E96A8] py-2">SIN REGISTROS EN ESTE FILTRO.</p>`;
+        return;
+      }
+      el.innerHTML = entries.map(([name, val]) => {
+        const pct = sum > 0 ? Math.round((val / sum) * 100) : 0;
+        return `
+          <div class="bg-[#0E0C12] border border-[#3B334A] p-2.5">
+            <div class="flex justify-between items-center mono text-xs">
+              <span class="font-bold text-[#E6DEC8]">${name}</span>
+              <span class="text-[#C89D66]">${fmt(val)} <span class="text-[10px] text-[#9E96A8]">(${pct}%)</span></span>
+            </div>
+            <div class="w-full h-1.5 bg-[#1B1824] mt-1.5 overflow-hidden">
+              <div class="h-full bg-[#D9534F]" style="width:${pct}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderAll() {
+      const now = new Date();
+      const months = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+      document.getElementById('lbl-cycle').textContent = `CICLO: ${months[now.getMonth()]} ${now.getFullYear()} // OFFLINE ACTIVO`;
+      document.getElementById('demo-banner').style.display = state.isDemo ? 'flex' : 'none';
+
+      const m = computeModel();
+      document.getElementById('kpi-total').textContent = fmt(m.totalMonth);
+      document.getElementById('kpi-sub-total').textContent = `${m.checklist.length} OBLIGACIONES`;
+      document.getElementById('kpi-pending').textContent = fmt(m.totalPending);
+      document.getElementById('kpi-paid').textContent = `PAGADO: ${fmt(m.totalPaid)}`;
+      document.getElementById('kpi-next').textContent = fmt(m.totalNext);
+      document.getElementById('badge-next-total').textContent = fmt(m.totalNext);
+
+      const pct = m.totalMonth > 0 ? Math.min(100, Math.round((m.totalPaid / m.totalMonth) * 100)) : 0;
+      document.getElementById('bar-progress').style.width = pct + '%';
+
+      const insights = generateInsights(m);
+      document.getElementById('apollo-msg').textContent = insights[insightIndex % insights.length];
+
+      // 1. Checklist
+      const clEl = document.getElementById('list-checklist');
+      if (!m.checklist.length) {
+        clEl.innerHTML = `<p class="mono text-xs text-[#9E96A8] py-3">NO HAY PAGOS REGISTRADOS EN ESTE MES. USA "+ REGISTRO" ARRIBA.</p>`;
+      } else {
+        clEl.innerHTML = m.checklist.map(item => `
+          <div onclick="toggleCheck('${item.key}', ${item.autoPaid})"
+               class="cursor-pointer p-2.5 border ${item.paid ? 'border-[#5FA882]/60 bg-[#121D18]/60' : 'border-[#3B334A] bg-[#0E0C12]'} flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-5 h-5 shrink-0 border ${item.paid ? 'border-[#5FA882] bg-[#5FA882] text-[#0B0A0E]' : 'border-[#9E96A8]'} flex items-center justify-center mono text-xs font-bold">
+                ${item.paid ? '✓' : ''}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="mono text-xs font-bold ${item.paid ? 'line-through text-[#9E96A8]' : 'text-[#E6DEC8]'}">${item.title}</span>
+                  <span class="tag ${item.autoPaid ? 'text-[#5FA882] border-[#5FA882]' : 'text-[#C89D66]'}">${item.autoPaid ? 'TDD // LIQUIDADO AL INSTANTE' : (item.paid ? 'PAGADO ✓' : 'PENDIENTE')}</span>
+                </div>
+                <p class="mono text-[10px] text-[#9E96A8] truncate mt-0.5">${item.sub}</p>
+              </div>
+            </div>
+            <span class="mono text-xs font-bold shrink-0 ${item.paid ? 'text-[#5FA882]' : 'text-[#E6DEC8]'}">${fmt(item.amount)}</span>
+          </div>
+        `).join('');
+      }
+
+      // 2. Próximo mes
+      const nmEl = document.getElementById('list-next-month');
+      if (!m.nextMonthItems.length) {
+        nmEl.innerHTML = `<p class="mono text-[11px] text-[#9E96A8] py-2">SIN CARGOS DIFERIDOS NI COMPRAS POST-CORTE.</p>`;
+      } else {
+        nmEl.innerHTML = m.nextMonthItems.map(n => `
+          <div class="bg-[#0E0C12] border border-[#3B334A] p-2.5 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="mono text-xs font-bold text-[#E6DEC8]">${n.title}</span>
+                <span class="tag text-[#C89D66]">${n.tag}</span>
+              </div>
+              <p class="mono text-[10px] text-[#9E96A8] truncate mt-0.5">${n.sub}</p>
+            </div>
+            <span class="mono text-xs font-bold text-[#C89D66] shrink-0">${fmt(n.amount)}</span>
+          </div>
+        `).join('');
+      }
+
+      // 3 & 4. Tableros
+      renderGroupBars(m.breakdownItems, 'merchant', filters.merchant, 'list-merchants');
+      renderGroupBars(m.breakdownItems, 'category', filters.category, 'list-categories');
+
+      // Render Vista Tarjetas
+      const cardsEl = document.getElementById('cards-container');
+      if (!state.cards.length) {
+        cardsEl.innerHTML = `<div class="panel p-4 mono text-xs text-[#9E96A8]">NO HAY TARJETAS REGISTRADAS. TOCA "+ TARJETA".</div>`;
+      } else {
+        cardsEl.innerHTML = state.cards.map(card => {
+          const isDebit = card.kind === 'TDD';
+          const txs = state.txs.filter(t => t.cardId === card.id);
+          const srvs = state.services.filter(s => s.cardId === card.id);
+          const cutTotal = txs.filter(t => !isPostCut(t, card)).reduce((s, t) => s + txMonthlyQuote(t), 0) + srvs.reduce((s, x) => s + Number(x.amount), 0);
+          const postTotal = txs.filter(t => isPostCut(t, card)).reduce((s, t) => s + txMonthlyQuote(t), 0);
+
+          return `
+            <div class="panel p-3.5 space-y-3">
+              <div class="flex items-start justify-between border-b border-[#3B334A] pb-2.5">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="mono text-sm font-bold text-[#E6DEC8]">${card.name} (*${card.last4})</span>
+                    <span class="tag ${isDebit ? 'text-[#5FA882] border-[#5FA882]' : 'text-[#D9534F] border-[#D9534F]'}">${isDebit ? 'TDD // DÉBITO' : 'TDC // CRÉDITO'}</span>
+                  </div>
+                  <p class="mono text-[10px] text-[#9E96A8] mt-0.5">
+                    ${isDebit ? `LIQUIDACIÓN INMEDIATA • PRESUPUESTO: ${fmt(card.limit)}` : `CORTE: DÍA ${card.cutDay} • LÍMITE PAGO: DÍA ${card.dueDay} • LÍNEA: ${fmt(card.limit)}`}
+                  </p>
+                </div>
+                <button onclick="deleteCard('${card.id}')" class="mono text-[10px] text-[#D9534F] border border-[#3B334A] px-2 py-0.5">ELIMINAR</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="bg-[#0E0C12] border border-[#3B334A] p-2">
+                  <span class="mono text-[9px] text-[#9E96A8]">${isDebit ? 'DESCONTADO ESTE MES' : 'A PAGAR ESTE MES'}</span>
+                  <p class="mono text-xs font-bold ${isDebit ? 'text-[#5FA882]' : 'text-[#E6DEC8]'} mt-0.5">${fmt(cutTotal)}</p>
+                </div>
+                <div class="bg-[#0E0C12] border border-[#3B334A] p-2">
+                  <span class="mono text-[9px] text-[#9E96A8]">POST-CORTE (PRÓX. MES)</span>
+                  <p class="mono text-xs font-bold text-[#C89D66] mt-0.5">${fmt(postTotal)}</p>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                ${txs.map(tx => {
+                  const post = isPostCut(tx, card);
+                  const quote = txMonthlyQuote(tx);
+                  return `
+                    <div class="bg-[#0E0C12] border border-[#3B334A] p-2 flex items-center justify-between gap-2">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                          <span class="mono text-xs font-bold text-[#E6DEC8]">${tx.merchant}</span>
+                          <span class="tag text-[#9E96A8]">${tx.category || 'OTROS'}</span>
+                          <span class="tag ${post ? 'text-[#C89D66]' : 'text-[#5FA882]'}">${isDebit ? 'PAGADO AL INSTANTE' : (post ? 'POST-CORTE → PRÓX. MES' : 'ENTRA ESTE MES')}</span>
+                        </div>
+                        <p class="mono text-[10px] text-[#9E96A8] mt-0.5">${tx.concept} • COMPRA DÍA ${tx.purchaseDay} ${tx.mode === 'MSI' ? `• MSI ${tx.monthsCurr}/${tx.monthsTotal}` : '• CONTADO'}</p>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        ${tx.mode === 'MSI' ? `<button onclick="stepMsi('${tx.id}',1)" class="tag text-[#C89D66]">+MES</button>` : ''}
+                        <span class="mono text-xs font-bold text-[#E6DEC8]">${fmt(quote)}</span>
+                        <button onclick="deleteTx('${tx.id}')" class="mono text-xs text-[#D9534F] px-1">✕</button>
+                      </div>
+                    </div>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      // Render Vista Terceros
+      const miscEl = document.getElementById('misc-container');
+      miscEl.innerHTML = state.misc.length ? state.misc.map(m => `
+        <div class="panel p-3 flex items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="mono text-xs font-bold text-[#E6DEC8]">${m.person} // ${m.merchant}</span>
+              <span class="tag text-[#C89D66]">PAGO ${m.curr}/${m.total}</span>
+              <span class="tag text-[#9E96A8]">${m.category || 'OTROS'}</span>
+            </div>
+            <p class="mono text-[10px] text-[#9E96A8] mt-0.5">${m.concept} • DÍA ${m.dueDay} • ${m.bank}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="stepMisc('${m.id}')" class="tag text-[#C89D66]">+1</button>
+            <span class="mono text-xs font-bold text-[#E6DEC8]">${fmt(m.amount)}</span>
+            <button onclick="deleteMisc('${m.id}')" class="mono text-xs text-[#D9534F]">✕</button>
+          </div>
+        </div>
+      `).join('') : `<div class="panel p-4 mono text-xs text-[#9E96A8]">SIN PAGOS A TERCEROS REGISTRADOS.</div>`;
+
+      // Render Vista Servicios
+      const srvEl = document.getElementById('services-container');
+      srvEl.innerHTML = state.services.length ? state.services.map(s => {
+        const card = state.cards.find(c => c.id === s.cardId);
+        return `
+          <div class="panel p-3 flex items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="mono text-xs font-bold text-[#E6DEC8]">${s.name}</span>
+                <span class="tag text-[#9E96A8]">${s.category || 'SUSCRIPCIÓN'}</span>
+                <span class="tag text-[#C89D66]">${card ? `CARGO A ${card.name}` : 'PAGO DIRECTO'}</span>
+              </div>
+              <p class="mono text-[10px] text-[#9E96A8] mt-0.5">COBRO DÍA ${s.day} • REF: ${s.ref}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="mono text-xs font-bold text-[#E6DEC8]">${fmt(s.amount)}</span>
+              <button onclick="deleteService('${s.id}')" class="mono text-xs text-[#D9534F]">✕</button>
+            </div>
+          </div>`;
+      }).join('') : `<div class="panel p-4 mono text-xs text-[#9E96A8]">SIN SERVICIOS REGISTRADOS.</div>`;
+
+      populateSelects();
+    }
+
+    function populateSelects() {
+      const txCard = document.getElementById('tx-card');
+      const sCard = document.getElementById('s-card');
+      const opts = state.cards.map(c => `<option value="${c.id}">${c.name} (*${c.last4}) [${c.kind}]</option>`).join('');
+      if (txCard) txCard.innerHTML = opts;
+      if (sCard) sCard.innerHTML = `<option value="DIRECT">PAGO DIRECTO / TRANSFERENCIA</option>` + opts;
+    }
+
+    function switchTab(tab) {
+      ['dashboard','cards','misc','services','backup'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById('tab-' + t);
+        btn.className = t === tab
+          ? 'mono text-[10px] py-2 border border-[#D9534F] bg-[#D9534F]/15 text-[#E6DEC8] font-bold'
+          : 'mono text-[10px] py-2 border border-transparent text-[#9E96A8]';
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openModal(id) { populateSelects(); document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function openQuickModal() { openModal('modal-quick'); }
+
+    function toggleCardKindFields() {
+      const kind = document.getElementById('c-kind').value;
+      document.getElementById('c-credit-days').style.display = kind === 'TDD' ? 'none' : 'grid';
+    }
+
+    function toggleMsiFields() {
+      const mode = document.getElementById('tx-mode').value;
+      document.getElementById('tx-msi-box').classList.toggle('hidden', mode !== 'MSI');
+    }
+
+    function saveCard() {
+      const kind = document.getElementById('c-kind').value;
+      const name = up(document.getElementById('c-name').value);
+      const last4 = up(document.getElementById('c-last4').value) || '0000';
+      const limit = Number(document.getElementById('c-limit').value) || 0;
+      const cutDay = kind === 'TDD' ? 31 : (Number(document.getElementById('c-cut').value) || 8);
+      const dueDay = kind === 'TDD' ? 1 : (Number(document.getElementById('c-due').value) || 28);
+      if (!name) return alert('INGRESA EL NOMBRE DE LA TARJETA');
+      state.isDemo = false;
+      state.cards.push({ id: 'c' + Date.now(), kind, name, last4, limit, cutDay, dueDay });
+      closeModal('modal-card');
+      saveState();
+    }
+
+    function saveTx() {
+      const cardId = document.getElementById('tx-card').value;
+      if (!cardId) return alert('PRIMERO REGISTRA UNA TARJETA');
+      const merchant = up(document.getElementById('tx-merchant').value);
+      const category = up(document.getElementById('tx-category').value);
+      const concept = up(document.getElementById('tx-concept').value) || 'COMPRA';
+      const amount = Number(document.getElementById('tx-amount').value) || 0;
+      const purchaseDay = Number(document.getElementById('tx-day').value) || 1;
+      const mode = document.getElementById('tx-mode').value;
+      const monthsTotal = mode === 'MSI' ? (Number(document.getElementById('tx-months-total').value) || 3) : 1;
+      const monthsCurr = mode === 'MSI' ? (Number(document.getElementById('tx-months-curr').value) || 1) : 1;
+      if (!merchant || amount <= 0) return alert('INGRESA ESTABLECIMIENTO Y MONTO');
+      state.isDemo = false;
+      state.txs.push({ id: 't' + Date.now(), cardId, merchant, category, concept, amount, purchaseDay, mode, monthsTotal, monthsCurr });
+      closeModal('modal-tx');
+      saveState();
+    }
+
+    function saveMisc() {
+      const person = up(document.getElementById('m-person').value);
+      const bank = up(document.getElementById('m-bank').value) || 'TRANSFERENCIA';
+      const merchant = up(document.getElementById('m-merchant').value) || 'TERCERO';
+      const category = up(document.getElementById('m-category').value) || 'OTROS';
+      const concept = up(document.getElementById('m-concept').value) || 'APOYO';
+      const amount = Number(document.getElementById('m-amount').value) || 0;
+      const curr = Number(document.getElementById('m-curr').value) || 1;
+      const total = Number(document.getElementById('m-total').value) || 1;
+      const dueDay = Number(document.getElementById('m-due').value) || 15;
+      if (!person || amount <= 0) return alert('INGRESA PERSONA Y MONTO');
+      state.isDemo = false;
+      state.misc.push({ id: 'm' + Date.now(), person, bank, merchant, category, concept, amount, curr, total, dueDay });
+      closeModal('modal-misc');
+      saveState();
+    }
+
+    function saveService() {
+      const name = up(document.getElementById('s-name').value);
+      const ref = up(document.getElementById('s-ref').value) || 'MENSUAL';
+      const category = up(document.getElementById('s-category').value);
+      const amount = Number(document.getElementById('s-amount').value) || 0;
+      const day = Number(document.getElementById('s-day').value) || 10;
+      const cardId = document.getElementById('s-card').value;
+      if (!name || amount <= 0) return alert('INGRESA NOMBRE DEL SERVICIO Y MONTO');
+      state.isDemo = false;
+      state.services.push({ id: 's' + Date.now(), name, ref, category, amount, day, cardId });
+      closeModal('modal-service');
+      saveState();
+    }
+
+    function deleteCard(id) {
+      if (!confirm('¿ELIMINAR TARJETA Y SUS COMPRAS ASOCIADAS?')) return;
+      state.cards = state.cards.filter(c => c.id !== id);
+      state.txs = state.txs.filter(t => t.cardId !== id);
+      saveState();
+    }
+    function deleteTx(id) { state.txs = state.txs.filter(t => t.id !== id); saveState(); }
+    function deleteMisc(id) { state.misc = state.misc.filter(m => m.id !== id); saveState(); }
+    function deleteService(id) { state.services = state.services.filter(s => s.id !== id); saveState(); }
+
+    function stepMsi(id, d) {
+      const tx = state.txs.find(t => t.id === id);
+      if (tx) { tx.monthsCurr = Math.min(tx.monthsTotal, Math.max(1, Number(tx.monthsCurr) + d)); saveState(); }
+    }
+    function stepMisc(id) {
+      const m = state.misc.find(x => x.id === id);
+      if (m) { m.curr = Math.min(m.total, Number(m.curr) + 1); saveState(); }
+    }
+
+    function resetToZero() {
+      if (!confirm('¿LIMPIAR TODOS LOS DATOS DEMO E INICIAR APOLLO EN BLANCO?')) return;
+      state = { isDemo: false, checks: {}, cards: [], txs: [], misc: [], services: [] };
+      saveState();
+    }
+
+    function restoreDemoData() {
+      state = getDemoState();
+      saveState();
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `APOLLO_RESPALDO_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    function importJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          state = JSON.parse(ev.target.result);
+          saveState();
+          alert('RESPALDO .JSON RESTAURADO CORRECTAMENTE');
+        } catch (err) { alert('ARCHIVO .JSON INVÁLIDO'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function exportCSV() {
+      const rows = [['ORIGEN','TARJETA_O_DESTINO','TIPO_TARJETA','ESTABLECIMIENTO','CATEGORIA_PRODUCTO','CONCEPTO','MODALIDAD','CUOTA_MES','MONTO_TOTAL','ESTADO_CICLO']];
+      state.txs.forEach(t => {
+        const c = state.cards.find(x => x.id === t.cardId);
+        const post = isPostCut(t, c);
+        rows.push(['TARJETA', c ? c.name : '', c ? c.kind : 'TDC', t.merchant, t.category, t.concept, t.mode, txMonthlyQuote(t).toFixed(2), t.amount, post ? 'POST-CORTE (PROX MES)' : 'MES ACTUAL']);
+      });
+      state.misc.forEach(m => {
+        rows.push(['TERCERO', m.person, 'TERCERO', m.merchant, m.category, m.concept, `${m.curr}/${m.total}`, m.amount, m.amount * m.total, 'MES ACTUAL']);
+      });
+      state.services.forEach(s => {
+        rows.push(['SERVICIO', s.name, 'SERVICIO', s.name, s.category, s.ref, 'MENSUAL', s.amount, s.amount, 'MES ACTUAL']);
+      });
+      const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `APOLLO_REPORTE_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    function downloadSW() {
+      const swCode = `const CACHE='apollo-v4';const FILES=['./','./index.html'];self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});`;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'sw.js';
+      a.click();
+    }
+
+    async function forceUpdateCache() {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const r of regs) await r.unregister();
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        for (const k of keys) await caches.delete(k);
+      }
+      location.reload(true);
+    }
+
+    function setupPWA() {
+      const c = document.createElement('canvas');
+      c.width = 180; c.height = 180;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0B0A0E'; ctx.fillRect(0, 0, 180, 180);
+      ctx.fillStyle = '#D9534F'; ctx.beginPath(); ctx.arc(90, 90, 58, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#16141C'; ctx.beginPath(); ctx.moveTo(45, 55); ctx.lineTo(135, 55); ctx.lineTo(145, 125); ctx.lineTo(90, 155); ctx.lineTo(35, 125); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#D9534F'; ctx.beginPath(); ctx.arc(70, 86, 10, 0, Math.PI * 2); ctx.arc(110, 86, 10, 0, Math.PI * 2); ctx.fill();
+      const iconUrl = c.toDataURL('image/png');
+      document.getElementById('apple-icon-link').href = iconUrl;
+      const manifest = { name: 'APOLLO FIN-OS', short_name: 'APOLLO', start_url: './index.html', display: 'standalone', background_color: '#0B0A0E', theme_color: '#0B0A0E', icons: [{ src: iconUrl, sizes: '180x180', type: 'image/png' }] };
+      document.getElementById('manifest-link').href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    setupPWA();
+    renderAll();
+  </script>
+</body>
+</html>
