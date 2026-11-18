@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="APOLLO" />
+  <meta name="theme-color" content="#0B0A0E" />
+  <title>APOLLO // TERMINAL FINANCIERA</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            abyss: '#0B0A0E',
+            charcoal: '#16141C',
+            panel: '#231F2E',
+            mist: '#3B334A',
+            steel: '#4A5268',
+            eclipse: '#D9534F',
+            terracotta: '#E06D53',
+            sand: '#E6DEC8',
+            ash: '#9E96A8',
+            ochre: '#C89D66',
+            sage: '#5C8A72'
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-abyss: #0B0A0E;
+      --bg-charcoal: #16141C;
+      --bg-panel: #231F2E;
+      --border-mist: #3B334A;
+      --border-steel: #4A5268;
+      --accent-eclipse: #D9534F;
+      --accent-terracotta: #E06D53;
+      --text-sand: #E6DEC8;
+      --text-ash: #9E96A8;
+      --accent-ochre: #C89D66;
+      --accent-sage: #5C8A72;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-abyss);
+      color: var(--text-sand);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: calc(5.8rem + env(safe-area-inset-bottom));
+      min-height: 100vh;
+      user-select: none;
+    }
+
+    /* Atmospheric Cyberpunk Skyline Header Background */
+    .skyline-backdrop {
+      background: linear-gradient(180deg, #1F192B 0%, #2D2235 45%, #16141C 90%, #0B0A0E 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Brutalist Cut Corners */
+    .cyber-card {
+      background-color: var(--bg-charcoal);
+      border: 1px solid var(--border-mist);
+      position: relative;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .cyber-card-sm {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-mist);
+      clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+    }
+
+    .cyber-btn {
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      transition: all 0.15s ease;
+    }
+
+    .cyber-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Owl Eye Pulse */
+    @keyframes eyePulse {
+      0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px rgba(217, 83, 79, 0.75)); }
+      50% { opacity: 0.7; filter: drop-shadow(0 0 1px rgba(217, 83, 79, 0.3)); }
+    }
+
+    @keyframes floatOwl {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2.5px); }
+    }
+
+    .owl-eye {
+      animation: eyePulse 3.2s infinite ease-in-out;
+    }
+
+    .owl-float {
+      animation: floatOwl 4.5s infinite ease-in-out;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0A0E;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3B334A;
+    }
+
+    input, select, textarea {
+      background-color: #0B0A0E !important;
+      color: #E6DEC8 !important;
+      border: 1px solid #3B334A !important;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none !important;
+      border-color: #D9534F !important;
+    }
+
+    /* Uppercase visual enforcement */
+    input[type="text"] {
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-eclipse selection:text-abyss">
+
+  <!-- TOP ATMOSPHERIC HEADER (Inspired by Reference Artwork) -->
+  <header class="skyline-backdrop border-b border-mist pt-3 pb-4 px-4 relative">
+    <!-- Red Eclipse Sun & Silhouette City SVG -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-90">
+      <!-- Eclipse Red Sun -->
+      <div class="w-28 h-28 rounded-full bg-gradient-to-b from-terracotta via-eclipse to-[#6e2429] absolute -top-2 right-12 opacity-80 blur-[0.4px]">
+        <!-- Eclipse inner moons -->
+        <div class="w-4 h-4 rounded-full bg-[#241B2B] absolute top-11 left-3"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-[#241B2B] absolute top-9 left-11"></div>
+      </div>
+      <!-- Diagonal atmospheric beam -->
+      <div class="w-64 h-[1px] bg-gradient-to-r from-transparent via-ochre/50 to-transparent absolute top-12 right-4 -rotate-6"></div>
+
+      <!-- Brutalist City Silhouette -->
+      <svg class="absolute bottom-0 left-0 w-full h-16 text-abyss/85" preserveAspectRatio="none" viewBox="0 0 400 70" fill="currentColor">
+        <rect x="5" y="18" width="22" height="52" opacity="0.5"/>
+        <rect x="32" y="30" width="18" height="40" opacity="0.4"/>
+        <rect x="75" y="10" width="28" height="60" opacity="0.45"/>
+        <rect x="115" y="35" width="24" height="35" opacity="0.6"/>
+        <rect x="165" y="26" width="35" height="44" opacity="0.35"/>
+        <rect x="235" y="12" width="22" height="58" opacity="0.5"/>
+        <rect x="275" y="28" width="30" height="42" opacity="0.4"/>
+        <rect x="330" y="8" width="38" height="62" opacity="0.55"/>
+        <!-- Foreground Industrial Cranes/Scaffolding -->
+        <path d="M0,70 L0,42 L18,42 L18,70 M6,42 L6,25 L14,25 L14,42 M180,70 L180,48 L220,48 L220,70 M365,70 L365,20 L395,20 L395,70" stroke="#0B0A0E" stroke-width="2" fill="#0B0A0E"/>
+      </svg>
+    </div>
+
+    <!-- Header Top Bar (Clean, No "Corte al día 15" label) -->
+    <div class="relative z-10 max-w-2xl mx-auto">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-eclipse inline-block"></span>
+            <span class="font-mono text-[10px] tracking-[0.22em] text-ash uppercase">TELEMETRÍA FINANCIERA // OFFLINE PWA</span>
+          </div>
+          <h1 class="text-xl font-bold tracking-wider text-sand flex items-center gap-2">
+            APOLLO <span class="text-xs font-mono font-normal px-2 py-0.5 bg-abyss/80 border border-mist text-terracotta">SISTEMA ACTIVO</span>
+          </h1>
+        </div>
+
+        <!-- Active Period Selector -->
+        <div class="text-right bg-abyss/85 border border-mist px-2.5 py-1.5">
+          <span class="block font-mono text-[9px] text-ash uppercase">PERIODO ACTIVO</span>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <button onclick="changeMonth(-1)" class="text-ash hover:text-sand px-1 font-mono text-xs" title="Mes Anterior">◀</button>
+            <span id="activePeriodLabel" class="font-mono text-xs font-semibold text-sand tracking-wider">NOV 2026</span>
+            <button onclick="changeMonth(1)" class="text-ash hover:text-sand px-1 font-mono text-xs" title="Mes Siguiente">▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- APOLLO: CYBERNETIC PLAGUE-DOCTOR OWL ANALYTICAL MODULE (DATA ANALYSIS ONLY) -->
+      <div class="cyber-card bg-abyss/90 backdrop-blur-sm p-3 border border-mist shadow-lg">
+        <div class="flex items-start gap-3">
+          <!-- Custom SVG Cybernetic Plague Doctor Owl -->
+          <div class="relative flex-shrink-0 w-16 h-16 bg-charcoal border border-mist flex items-center justify-center cursor-pointer group" onclick="cycleApolloAnalysis()" title="Solicitar nuevo escaneo de datos a APOLLO">
+            <svg class="w-14 h-14 owl-float" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Subtle Eclipse Halo Behind Head -->
+              <circle cx="32" cy="28" r="22" fill="#D9534F" fill-opacity="0.12" />
+              <circle cx="32" cy="28" r="18" stroke="#3B334A" stroke-width="0.8" stroke-dasharray="3 2" />
+
+              <!-- Owl Cybernetic Horns / Ears -->
+              <path d="M14 14L22 20L16 24Z" fill="#231F2E" stroke="#9E96A8" stroke-width="1.2"/>
+              <path d="M50 14L42 20L48 24Z" fill="#231F2E" stroke="#9E96A8" stroke-width="1.2"/>
+
+              <!-- Hood / Cranium Armor -->
+              <path d="M16 22C16 14 23 10 32 10C41 10 48 14 48 22V38C48 44 42 52 32 54C22 52 16 44 16 38V22Z" fill="#16141C" stroke="#E6DEC8" stroke-width="1.3"/>
+
+              <!-- Forehead Telemetry Circuit -->
+              <path d="M32 10V18M28 14H36" stroke="#D9534F" stroke-width="1.2"/>
+
+              <!-- Goggle Frames (Plague Doctor Optical Rings) -->
+              <circle cx="24" cy="26" r="6.5" fill="#0B0A0E" stroke="#E6DEC8" stroke-width="1.4"/>
+              <circle cx="40" cy="26" r="6.5" fill="#0B0A0E" stroke="#E6DEC8" stroke-width="1.4"/>
+              <!--Glowing Red Optical Lenses -->
+              <circle class="owl-eye" cx="24" cy="26" r="4" fill="#D9534F"/>
+              <circle class="owl-eye" cx="40" cy="26" r="4" fill="#D9534F"/>
+              <!-- Lens Crosshairs -->
+              <circle cx="22.8" cy="24.8" r="1" fill="#E6DEC8"/>
+              <circle cx="38.8" cy="24.8" r="1" fill="#E6DEC8"/>
+
+              <!-- Plague Doctor Cybernetic Angular Beak / Respirator Mask -->
+              <path d="M25 31L32 28L39 31L35 49L32 53L29 49L25 31Z" fill="#231F2E" stroke="#C89D66" stroke-width="1.3"/>
+              <!-- Center Seam & Respirator Vents on Beak -->
+              <line x1="32" y1="28" x2="32" y2="52" stroke="#9E96A8" stroke-width="1"/>
+              <line x1="28" y1="37" x2="30.5" y2="38" stroke="#E06D53" stroke-width="1.2"/>
+              <line x1="28.5" y1="41" x2="30.5" y2="42" stroke="#E06D53" stroke-width="1.2"/>
+              <line x1="36" y1="37" x2="33.5" y2="38" stroke="#E06D53" stroke-width="1.2"/>
+              <line x1="35.5" y1="41" x2="33.5" y2="42" stroke="#E06D53" stroke-width="1.2"/>
+
+              <!-- Collar / Cloak Shoulders -->
+              <path d="M12 56C15 49 21 47 28 47M52 56C49 49 43 47 36 47" stroke="#4A5268" stroke-width="1.5"/>
+            </svg>
+            <span class="absolute bottom-0.5 right-0.5 w-2 h-2 bg-sage rounded-full"></span>
+          </div>
+
+          <!-- Analytical Telemetry Output -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <div class="flex items-center gap-1.5">
+                <span class="font-mono text-[10px] font-bold tracking-wider text-terracotta uppercase">APOLLO // DIAGNÓSTICO DE DATOS</span>
+                <span id="apolloMetricTag" class="font-mono text-[9px] px-1.5 py-0.5 bg-panel border border-mist text-ochre">MÉTRICA 1/7</span>
+              </div>
+              <button onclick="cycleApolloAnalysis()" class="text-ash hover:text-sand p-1 bg-panel border border-mist text-[10px] font-mono flex items-center gap-1" title="Siguiente análisis de datos">
+                <span>↻ ESCANEAR</span>
+              </button>
+            </div>
+
+            <p id="apolloSpeech" class="text-xs text-sand/95 leading-relaxed font-mono">
+              Inicializando análisis de flujos de corte y obligaciones del mes...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-2xl mx-auto px-4 pt-4 space-y-5">
+
+    <!-- ==================== TAB 1: TABLERO PRINCIPAL ==================== -->
+    <section id="tab-resumen" class="space-y-4">
+
+      <!-- TOP KPI SUMMARY GRID -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <!-- KPI 1: Total a Pagar en el Mes -->
+        <div class="cyber-card p-3.5 border-l-2 border-l-eclipse">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] text-terracotta uppercase tracking-wider">TOTAL A PAGAR EN EL MES</span>
+            <i data-lucide="check-square" class="w-3.5 h-3.5 text-eclipse"></i>
+          </div>
+          <div id="kpiMonthTotal" class="font-mono text-xl font-bold text-sand mt-1">$0.00</div>
+          <div class="mt-2 pt-1.5 border-t border-mist/70 flex items-center justify-between font-mono text-[10px]">
+            <span class="text-ash">PENDIENTE: <strong id="kpiMonthPending" class="text-terracotta">$0.00</strong></span>
+            <span class="text-ash">PAGADO: <strong id="kpiMonthPaid" class="text-sage">$0.00</strong></span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Gasto Próximo Mes (Post-Corte + MSI Continuos) -->
+        <div class="cyber-card p-3.5 border-l-2 border-l-ochre">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] text-ochre uppercase tracking-wider">GASTO PRÓXIMO MES</span>
+            <i data-lucide="fast-forward" class="w-3.5 h-3.5 text-ochre"></i>
+          </div>
+          <div id="kpiNextMonthTotal" class="font-mono text-xl font-bold text-ochre mt-1">$0.00</div>
+          <div class="mt-2 pt-1.5 border-t border-mist/70 flex items-center justify-between font-mono text-[10px]">
+            <span class="text-ash">POST-CORTE: <strong id="kpiNextPostCorte" class="text-sand">$0.00</strong></span>
+            <span class="text-ash">MSI SIG.: <strong id="kpiNextMsi" class="text-sand">$0.00</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: PAGOS DEL MES (CHECKLIST DE LIQUIDACIÓN) -->
+      <div class="cyber-card p-3.5 border-t-2 border-t-eclipse">
+        <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-2.5">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-eclipse inline-block"></span>
+              <h2 class="font-mono text-xs font-bold tracking-wider text-sand uppercase">1. PAGOS DEL MES (CHECKLIST DE LIQUIDACIÓN)</h2>
+            </div>
+            <p class="text-[11px] text-ash mt-0.5">Marca con un check cada tarjeta, servicio o apoyo de tercero conforme lo liquides</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="badgeMonthChecklistStatus" class="font-mono text-[10px] px-2 py-0.5 bg-panel border border-mist text-ochre">0 PENDIENTES</span>
+            <button onclick="resetMonthlyChecks()" class="px-2 py-0.5 bg-abyss border border-mist hover:border-sand font-mono text-[9px] text-ash hover:text-sand" title="Reiniciar todos los checkmarks del mes">
+              ↺ REINICIAR CHECKS
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress bar of monthly payments -->
+        <div class="mb-3 bg-abyss p-2 border border-mist">
+          <div class="flex items-center justify-between font-mono text-[10px] mb-1">
+            <span class="text-ash">PROGRESO DE LIQUIDACIÓN DEL MES</span>
+            <span id="checklistProgressLabel" class="text-sage font-bold">0% COMPLETADO</span>
+          </div>
+          <div class="w-full h-1.5 bg-panel overflow-hidden">
+            <div id="checklistProgressBar" class="h-full bg-sage transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div id="monthlyChecklistContainer" class="space-y-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 2: GASTOS PARA EL PRÓXIMO MES (POST-CORTE + MSI COMPROMETIDOS) -->
+      <div class="cyber-card p-3.5 border-l-2 border-l-ochre">
+        <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-ochre inline-block"></span>
+              <h2 class="font-mono text-xs font-bold tracking-wider text-ochre uppercase">2. GASTOS PARA EL PRÓXIMO MES (POST-CORTE Y MSI)</h2>
+            </div>
+            <p class="text-[11px] text-ash mt-0.5">Compras hechas después de la fecha de corte de tu TDC y mensualidades MSI que continúan el próximo mes</p>
+          </div>
+          <span id="badgeNextMonthCount" class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-ochre/40 text-ochre">0 CARGOS</span>
+        </div>
+
+        <!-- Sub-block A: Compras Post-Corte -->
+        <div class="mb-3">
+          <div class="flex items-center justify-between font-mono text-[10px] text-ash uppercase mb-1.5">
+            <span>A) COMPRAS POST-CORTE (DÍA COMPRA &gt; DÍA CORTE TDC)</span>
+            <span id="subTotalPostCorte" class="text-ochre font-bold">$0.00</span>
+          </div>
+          <div id="postCorteList" class="space-y-1.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Sub-block B: Mensualidades MSI Comprometidas Próximo Mes -->
+        <div class="pt-2.5 border-t border-mist">
+          <div class="flex items-center justify-between font-mono text-[10px] text-ash uppercase mb-1.5">
+            <span>B) MENSUALIDADES MSI Y TERCEROS QUE CONTINÚAN EL PRÓXIMO MES</span>
+            <span id="subTotalNextMsi" class="text-sand font-bold">$0.00</span>
+          </div>
+          <div id="nextMonthMsiList" class="space-y-1.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: TABLERO POR ESTABLECIMIENTO / APLICACIÓN -->
+      <div class="cyber-card p-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-mist pb-2.5 mb-3">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-terracotta inline-block"></span>
+              <h2 class="font-mono text-xs font-bold tracking-wider text-sand uppercase">3. TABLERO POR ESTABLECIMIENTO / APLICACIÓN</h2>
+            </div>
+            <p class="text-[11px] text-ash mt-0.5">Conteo y proporción de gastos por comercio, plataforma o servicio</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openQuickExpenseModal()" class="cyber-btn bg-eclipse text-abyss font-mono text-[10px] font-bold px-2.5 py-1.5 flex items-center gap-1">
+              <i data-lucide="plus" class="w-3 h-3"></i> + GASTO TARJETA
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Buttons for Establishment Board -->
+        <div class="grid grid-cols-3 gap-1.5 mb-3 bg-abyss p-1 border border-mist font-mono text-[10px]">
+          <button id="filterPlaces-CURRENT" onclick="setPlacesFilter('CURRENT')" class="py-1.5 px-2 bg-panel text-terracotta border border-terracotta/50 font-bold">
+            MES ACTUAL
+          </button>
+          <button id="filterPlaces-NEXT" onclick="setPlacesFilter('NEXT')" class="py-1.5 px-2 text-ash hover:text-sand">
+            POST-CORTE (PRÓX.)
+          </button>
+          <button id="filterPlaces-ALL" onclick="setPlacesFilter('ALL')" class="py-1.5 px-2 text-ash hover:text-sand">
+            GLOBAL (TODOS)
+          </button>
+        </div>
+
+        <div id="placesDistributionList" class="space-y-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 4: TABLERO POR TIPO DE PRODUCTO / SERVICIO -->
+      <div class="cyber-card p-3.5 border-l-2 border-l-sage">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-mist pb-2.5 mb-3">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-sage inline-block"></span>
+              <h2 class="font-mono text-xs font-bold tracking-wider text-sand uppercase">4. TABLERO POR TIPO DE PRODUCTO / SERVICIO</h2>
+            </div>
+            <p class="text-[11px] text-ash mt-0.5">Distribución de tus gastos según la naturaleza del producto o servicio adquirido</p>
+          </div>
+          <span id="badgeProductTypesCount" class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-sage/50 text-sage">0 CATEGORÍAS</span>
+        </div>
+
+        <!-- Filter Buttons for Product/Service Type Board -->
+        <div class="grid grid-cols-3 gap-1.5 mb-3 bg-abyss p-1 border border-mist font-mono text-[10px]">
+          <button id="filterProducts-CURRENT" onclick="setProductTypesFilter('CURRENT')" class="py-1.5 px-2 bg-panel text-sage border border-sage/50 font-bold">
+            MES ACTUAL
+          </button>
+          <button id="filterProducts-NEXT" onclick="setProductTypesFilter('NEXT')" class="py-1.5 px-2 text-ash hover:text-sand">
+            POST-CORTE (PRÓX.)
+          </button>
+          <button id="filterProducts-ALL" onclick="setProductTypesFilter('ALL')" class="py-1.5 px-2 text-ash hover:text-sand">
+            GLOBAL (TODOS)
+          </button>
+        </div>
+
+        <div id="productTypesDistributionList" class="space-y-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: TARJETAS DE CRÉDITO Y DÉBITO ==================== -->
+    <section id="tab-tarjetas" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-mono text-sm font-bold tracking-wider text-sand uppercase">TARJETAS // CRÉDITO (TDC) Y DÉBITO (TDD)</h2>
+          <p class="text-xs text-ash">Controla ciclos de corte y MSI en TDC, o gastos de liquidación inmediata en TDD</p>
+        </div>
+        <button onclick="openCardModal()" class="cyber-btn bg-eclipse text-abyss font-mono text-xs font-bold px-3 py-2 flex items-center gap-1.5">
+          <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> + TARJETA
+        </button>
+      </div>
+
+      <div id="cardsContainer" class="space-y-4">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: TERCEROS / MISCELÁNEO ==================== -->
+    <section id="tab-terceros" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-mono text-sm font-bold tracking-wider text-sand uppercase">MISCELÁNEO // APOYO DE TERCEROS</h2>
+          <p class="text-xs text-ash">Control de pagos a personas que te apoyaron con su TDC o préstamos directos</p>
+        </div>
+        <button onclick="openThirdPartyModal()" class="cyber-btn bg-eclipse text-abyss font-mono text-xs font-bold px-3 py-2 flex items-center gap-1.5">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + REGISTRO
+        </button>
+      </div>
+
+      <div id="thirdPartyContainer" class="space-y-3">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: SERVICIOS Y SUSCRIPCIONES ==================== -->
+    <section id="tab-servicios" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-mono text-sm font-bold tracking-wider text-sand uppercase">PAGO DE SERVICIOS // SUSCRIPCIONES</h2>
+          <p class="text-xs text-ash">Internet, Gym, Gemini Pro y servicios recurrentes (domiciliados a TDC o de pago directo)</p>
+        </div>
+        <button onclick="openServiceModal()" class="cyber-btn bg-eclipse text-abyss font-mono text-xs font-bold px-3 py-2 flex items-center gap-1.5">
+          <i data-lucide="zap" class="w-3.5 h-3.5"></i> + SERVICIO
+        </button>
+      </div>
+
+      <div id="servicesContainer" class="space-y-2.5">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: RESPALDO & PORTABILIDAD ==================== -->
+    <section id="tab-respaldo" class="space-y-4 hidden">
+      <div>
+        <h2 class="font-mono text-sm font-bold tracking-wider text-sand uppercase">PORTABILIDAD // RESPALDO OFFLINE</h2>
+        <p class="text-xs text-ash">Tus datos viven en la memoria interna de tu iPhone. Descarga tu archivo JSON o CSV cuando quieras.</p>
+      </div>
+
+      <!-- Export Dual Panel -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="cyber-card p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-terracotta">RESPALDO TOTAL (.JSON)</span>
+              <i data-lucide="database" class="w-4 h-4 text-terracotta"></i>
+            </div>
+            <p class="text-xs text-ash leading-relaxed mb-4">
+              Guarda absolutamente todas tus tarjetas, fechas de corte, compras MSI, terceros y servicios para restaurar en otro iPhone con 1 toque.
+            </p>
+          </div>
+          <button onclick="exportDatabaseJSON()" class="cyber-btn w-full bg-eclipse text-abyss font-mono text-xs font-bold py-2.5 flex items-center justify-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i> DESCARGAR ARCHIVO .JSON
+          </button>
+        </div>
+
+        <div class="cyber-card p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-ochre">HOJA DE CÁLCULO (.CSV)</span>
+              <i data-lucide="file-spreadsheet" class="w-4 h-4 text-ochre"></i>
+            </div>
+            <p class="text-xs text-ash leading-relaxed mb-4">
+              Descarga una tabla detallada compatible con Excel o Numbers incluyendo estado de pago mensual, corte actual y cargos post-corte.
+            </p>
+          </div>
+          <button onclick="exportDatabaseCSV()" class="cyber-btn w-full bg-ochre text-abyss font-mono text-xs font-bold py-2.5 flex items-center justify-center gap-2">
+            <i data-lucide="table" class="w-4 h-4"></i> DESCARGAR ARCHIVO .CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Import / Restore Panel -->
+      <div class="cyber-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-mono text-xs font-bold text-sand uppercase">RESTAURAR O ACTUALIZAR DESDE ARCHIVO (.JSON)</span>
+          <i data-lucide="upload-cloud" class="w-4 h-4 text-sand"></i>
+        </div>
+        <p class="text-xs text-ash mb-3">
+          Selecciona un archivo <code class="text-sand">.json</code> descargado previamente para restaurar tu base de datos o fusionar registros.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-2.5">
+          <label class="cyber-btn flex-1 bg-panel border border-mist hover:border-sand text-sand font-mono text-xs py-2.5 px-3 text-center cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="folder-open" class="w-4 h-4 text-terracotta"></i>
+            <span>SELECCIONAR ARCHIVO .JSON</span>
+            <input type="file" id="jsonImportInput" accept=".json,application/json" class="hidden" onchange="handleImportJSON(event)" />
+          </label>
+          <button onclick="resetToDemoData()" class="cyber-btn bg-abyss border border-mist text-ash hover:text-eclipse font-mono text-xs py-2.5 px-3">
+            RESTABLECER DATOS EJEMPLO
+          </button>
+        </div>
+      </div>
+
+      <!-- iOS PWA Installation Guide -->
+      <div class="cyber-card p-4 border-l-2 border-l-ochre">
+        <h3 class="font-mono text-xs font-bold text-ochre uppercase mb-2 flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4"></i> INSTALACIÓN OFFLINE EN TU IPHONE (IOS)
+        </h3>
+        <ol class="text-xs text-ash space-y-1.5 list-decimal list-inside font-mono">
+          <li>Abre este enlace o archivo en <strong class="text-sand">Safari</strong> desde tu iPhone.</li>
+          <li>Toca el botón <strong class="text-sand">Compartir</strong> (el cuadro con la flecha hacia arriba en la barra inferior).</li>
+          <li>Selecciona <strong class="text-sand">"Agregar a la pantalla de inicio"</strong>.</li>
+          <li>El sistema <strong class="text-terracotta">APOLLO</strong> quedará instalado a pantalla completa y funcionará sin conexión a internet.</li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL 1: ADD / EDIT CREDIT OR DEBIT CARD -->
+  <div id="modalCard" class="fixed inset-0 z-50 bg-abyss/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-mist">
+      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
+        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">REGISTRAR TARJETA (CRÉDITO O DÉBITO)</h3>
+        <button onclick="closeModal('modalCard')" class="text-ash hover:text-sand font-mono text-sm">✕</button>
+      </div>
+      <form id="formCard" onsubmit="saveCard(event)" class="space-y-3">
+        <input type="hidden" id="cardId" />
+        <div>
+          <label class="block font-mono text-[10px] text-ochre mb-1">TIPO DE TARJETA</label>
+          <select id="cardType" onchange="toggleCardTypeFields()" class="w-full px-2.5 py-2">
+            <option value="TDC">TARJETA DE CRÉDITO (TDC // CORTE Y FECHA DE PAGO)</option>
+            <option value="TDD">TARJETA DE DÉBITO (TDD // SE LIQUIDA AL INSTANTE)</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="col-span-2">
+            <label class="block font-mono text-[10px] text-ash mb-1">BANCO / NOMBRE DE TARJETA</label>
+            <input type="text" id="cardName" required placeholder="EJ. BBVA AZUL, NU DÉBITO, BANREGIO" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">ÚLTIMOS 4 DÍG.</label>
+            <input type="text" id="cardDigits" maxlength="4" required placeholder="4821" class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+
+        <!-- Dynamic Fields for TDC vs TDD -->
+        <div id="tdcSpecificFields" class="grid grid-cols-3 gap-2">
+          <div>
+            <label id="cardLimitLabel" class="block font-mono text-[10px] text-ash mb-1">LÍMITE CRÉDITO ($)</label>
+            <input type="number" step="0.01" id="cardLimit" required placeholder="25000" class="w-full px-2.5 py-2" />
+          </div>
+          <div id="cardCutoffWrap">
+            <label class="block font-mono text-[10px] text-ochre mb-1">DÍA DE CORTE (1-31)</label>
+            <input type="number" min="1" max="31" id="cardCutoff" value="8" class="w-full px-2.5 py-2" />
+          </div>
+          <div id="cardDueWrap">
+            <label class="block font-mono text-[10px] text-terracotta mb-1">DÍA LÍMITE PAGO</label>
+            <input type="number" min="1" max="31" id="cardDue" value="28" class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+
+        <div id="cardTypeHelperNotice" class="bg-abyss p-2 border border-mist text-[10px] font-mono text-ash">
+          • Las compras realizadas <strong class="text-sand">en o antes del Día de Corte</strong> se integran al pago del mes actual.<br>
+          • Las compras realizadas <strong class="text-ochre">después del Día de Corte</strong> pasan automáticamente al apartado del <strong class="text-ochre">Próximo Mes</strong>.
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalCard')" class="flex-1 py-2 bg-panel text-ash font-mono text-xs">CANCELAR</button>
+          <button type="submit" class="cyber-btn flex-1 py-2 bg-eclipse text-abyss font-mono text-xs font-bold">GUARDAR TARJETA</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD PURCHASE TO CARD (TDC OR TDD) -->
+  <div id="modalCharge" class="fixed inset-0 z-50 bg-abyss/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-mist max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
+        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">NUEVO CARGO / COMPRA EN TARJETA</h3>
+        <button onclick="closeModal('modalCharge')" class="text-ash hover:text-sand font-mono text-sm">✕</button>
+      </div>
+      <form id="formCharge" onsubmit="saveCharge(event)" class="space-y-3">
+        <div>
+          <label class="block font-mono text-[10px] text-ash mb-1">TARJETA (CRÉDITO O DÉBITO)</label>
+          <select id="chargeCardId" required onchange="previewCutoffRule()" class="w-full px-2.5 py-2"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">APLICACIÓN / LUGAR</label>
+            <input type="text" id="chargePlace" list="placesSuggestions" required placeholder="EJ. AMAZON, UBER, STEAM" class="w-full px-2.5 py-2" />
+            <datalist id="placesSuggestions">
+              <option value="AMAZON"></option>
+              <option value="MERCADO LIBRE"></option>
+              <option value="UBER"></option>
+              <option value="DIDI"></option>
+              <option value="OXXO"></option>
+              <option value="STEAM"></option>
+              <option value="HEB"></option>
+              <option value="WALMART"></option>
+              <option value="LIVERPOOL"></option>
+            </datalist>
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">DÍA DE COMPRA (1-31)</label>
+            <input type="number" min="1" max="31" id="chargePurchaseDay" required oninput="previewCutoffRule()" placeholder="EJ. 12" class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+
+        <!-- Live Cutoff / Instant Debit Detection Notice -->
+        <div id="cutoffPreviewBanner" class="p-2 bg-abyss border border-mist font-mono text-[10px] text-sand">
+          Selecciona tarjeta y día de compra para verificar su liquidación.
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">CONCEPTO / DESCRIPCIÓN</label>
+            <input type="text" id="chargeConcept" required placeholder="EJ. MONITOR 27 PULGADAS, DESPENSA" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-sage mb-1">TIPO DE PRODUCTO / SERVICIO</label>
+            <input type="text" id="chargeProductType" list="productTypesSuggestions" required placeholder="EJ. ELECTRÓNICA / HARDWARE" class="w-full px-2.5 py-2" />
+            <datalist id="productTypesSuggestions">
+              <option value="ALIMENTOS Y BEBIDAS"></option>
+              <option value="COLECCIONABLES / HOBBIES"></option>
+              <option value="SUSCRIPCIONES / SOFTWARE"></option>
+              <option value="SALUD / GYM / DEPORTE"></option>
+              <option value="ELECTRÓNICA / HARDWARE"></option>
+              <option value="HOGAR / SERVICIOS BÁSICOS"></option>
+              <option value="ROPA / ACCESORIOS / PERFUMERÍA"></option>
+              <option value="TRANSPORTE / MOVILIDAD"></option>
+              <option value="ENTRETENIMIENTO / LIBROS"></option>
+              <option value="OTROS"></option>
+            </datalist>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">MONTO TOTAL COMPRA ($)</label>
+            <input type="number" step="0.01" id="chargeTotal" required placeholder="1500.00" class="w-full px-2.5 py-2" />
+          </div>
+          <div id="chargeModalityWrap">
+            <label class="block font-mono text-[10px] text-ash mb-1">MODALIDAD</label>
+            <select id="chargeModality" onchange="toggleMsiFields()" class="w-full px-2.5 py-2">
+              <option value="CONTADO">DE CONTADO (1 PAGO)</option>
+              <option value="MSI">A MESES (MSI)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="msiFieldsContainer" class="grid grid-cols-2 gap-2 hidden bg-abyss p-2.5 border border-mist">
+          <div>
+            <label class="block font-mono text-[10px] text-ochre mb-1">PLAZO TOTAL (MESES)</label>
+            <select id="chargeTotalMonths" class="w-full px-2.5 py-1.5">
+              <option value="3">3 MESES</option>
+              <option value="6">6 MESES</option>
+              <option value="9">9 MESES</option>
+              <option value="12">12 MESES</option>
+              <option value="18">18 MESES</option>
+              <option value="24">24 MESES</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ochre mb-1">MENSUALIDAD ACTUAL</label>
+            <input type="number" min="1" max="24" id="chargeCurrentMonth" value="1" class="w-full px-2.5 py-1.5" />
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalCharge')" class="flex-1 py-2 bg-panel text-ash font-mono text-xs">CANCELAR</button>
+          <button type="submit" class="cyber-btn flex-1 py-2 bg-eclipse text-abyss font-mono text-xs font-bold">GUARDAR CARGO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ADD THIRD-PARTY / MISC PAYMENT -->
+  <div id="modalThirdParty" class="fixed inset-0 z-50 bg-abyss/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-mist max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
+        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">PAGO A TERCERO / APOYO CON TDC</h3>
+        <button onclick="closeModal('modalThirdParty')" class="text-ash hover:text-sand font-mono text-sm">✕</button>
+      </div>
+      <form id="formThirdParty" onsubmit="saveThirdParty(event)" class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">PERSONA / BENEFICIARIO</label>
+            <input type="text" id="tpPerson" required placeholder="EJ. CARLOS MÉNDEZ" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">TIPO DE APOYO</label>
+            <select id="tpSupportType" class="w-full px-2.5 py-2">
+              <option value="PRÉSTAMO TDC">PRÉSTAMO DE SU TDC</option>
+              <option value="PRÉSTAMO DIRECTO">PRÉSTAMO EFECTIVO/TRANSF.</option>
+              <option value="GASTO COMPARTIDO">COMPRA COMPARTIDA</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">CONCEPTO / ARTÍCULO</label>
+            <input type="text" id="tpConcept" required placeholder="EJ. BOLETOS CONCIERTO" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">LUGAR / APLICACIÓN</label>
+            <input type="text" id="tpPlace" required placeholder="EJ. TICKETMASTER, AMAZON" class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-mono text-[10px] text-sage mb-1">TIPO DE PRODUCTO / SERVICIO</label>
+          <input type="text" id="tpProductType" list="productTypesSuggestions" required placeholder="EJ. ENTRETENIMIENTO / LIBROS, ROPA / ACCESORIOS / PERFUMERÍA" class="w-full px-2.5 py-2" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">BANCO / DATOS TRANSFERENCIA</label>
+            <input type="text" id="tpBankInfo" required placeholder="EJ. BBVA CLABE *9921" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-terracotta mb-1">DÍA DE PAGO ACORDADO (1-31)</label>
+            <input type="number" min="1" max="31" id="tpDueDay" value="18" required class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">PAGO MENSUAL ($)</label>
+            <input type="number" step="0.01" id="tpMonthlyAmount" required placeholder="850.00" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">PAGO ACTUAL</label>
+            <input type="number" min="1" id="tpCurrentInstallment" value="1" required class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">TOTAL PAGOS</label>
+            <input type="number" min="1" id="tpTotalInstallments" value="1" required class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalThirdParty')" class="flex-1 py-2 bg-panel text-ash font-mono text-xs">CANCELAR</button>
+          <button type="submit" class="cyber-btn flex-1 py-2 bg-eclipse text-abyss font-mono text-xs font-bold">GUARDAR REGISTRO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: ADD RECURRING SERVICE -->
+  <div id="modalService" class="fixed inset-0 z-50 bg-abyss/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-md p-4 bg-charcoal border border-mist max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-mist pb-2.5 mb-3">
+        <h3 class="font-mono text-xs font-bold text-terracotta uppercase">REGISTRAR SERVICIO / SUSCRIPCIÓN</h3>
+        <button onclick="closeModal('modalService')" class="text-ash hover:text-sand font-mono text-sm">✕</button>
+      </div>
+      <form id="formService" onsubmit="saveService(event)" class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">NOMBRE DEL SERVICIO</label>
+            <input type="text" id="srvName" required placeholder="EJ. GEMINI PRO, GYM, TELMEX" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-sage mb-1">TIPO DE PRODUCTO / SERVICIO</label>
+            <select id="srvCategory" class="w-full px-2.5 py-2">
+              <option value="SUSCRIPCIONES / SOFTWARE">SUSCRIPCIONES / SOFTWARE</option>
+              <option value="SALUD / GYM / DEPORTE">SALUD / GYM / DEPORTE</option>
+              <option value="HOGAR / SERVICIOS BÁSICOS">HOGAR / SERVICIOS BÁSICOS</option>
+              <option value="ENTRETENIMIENTO / LIBROS">ENTRETENIMIENTO / LIBROS</option>
+              <option value="ALIMENTOS Y BEBIDAS">ALIMENTOS Y BEBIDAS</option>
+              <option value="TRANSPORTE / MOVILIDAD">TRANSPORTE / MOVILIDAD</option>
+              <option value="COLECCIONABLES / HOBBIES">COLECCIONABLES / HOBBIES</option>
+              <option value="OTROS">OTROS</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">ID / REFERENCIA / CUENTA</label>
+            <input type="text" id="srvRef" required placeholder="EJ. CTA-88412 / GOOGLE ID" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">DÍA DE COBRO (1-31)</label>
+            <input type="number" min="1" max="31" id="srvBillingDay" required placeholder="10" class="w-full px-2.5 py-2" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">COSTO MENSUAL ($)</label>
+            <input type="number" step="0.01" id="srvCost" required placeholder="399.00" class="w-full px-2.5 py-2" />
+          </div>
+          <div>
+            <label class="block font-mono text-[10px] text-ash mb-1">MÉTODO DE CARGO</label>
+            <select id="srvPaymentMethod" class="w-full px-2.5 py-2"></select>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalService')" class="flex-1 py-2 bg-panel text-ash font-mono text-xs">CANCELAR</button>
+          <button type="submit" class="cyber-btn flex-1 py-2 bg-eclipse text-abyss font-mono text-xs font-bold">GUARDAR SERVICIO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 hidden bg-charcoal border border-terracotta px-4 py-2.5 shadow-xl font-mono text-xs text-sand flex items-center gap-2">
+    <span class="w-2 h-2 bg-terracotta inline-block"></span>
+    <span id="toastText">OPERACIÓN COMPLETADA</span>
+  </div>
+
+  <!-- BOTTOM NAVIGATION BAR (iOS SAFE AREA OPTIMIZED) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-abyss/95 backdrop-blur-md border-t border-mist px-2 pt-1.5 pb-[calc(0.45rem+env(safe-area-inset-bottom))]">
+    <div class="max-w-2xl mx-auto grid grid-cols-5 gap-1">
+      <button onclick="switchTab('resumen')" id="nav-resumen" class="nav-btn flex flex-col items-center py-1.5 text-terracotta border-t-2 border-terracotta">
+        <i data-lucide="cpu" class="w-4 h-4 mb-0.5"></i>
+        <span class="font-mono text-[9px] tracking-wider uppercase">TABLERO</span>
+      </button>
+      <button onclick="switchTab('tarjetas')" id="nav-tarjetas" class="nav-btn flex flex-col items-center py-1.5 text-ash border-t-2 border-transparent">
+        <i data-lucide="credit-card" class="w-4 h-4 mb-0.5"></i>
+        <span class="font-mono text-[9px] tracking-wider uppercase">TARJETAS</span>
+      </button>
+      <button onclick="switchTab('terceros')" id="nav-terceros" class="nav-btn flex flex-col items-center py-1.5 text-ash border-t-2 border-transparent">
+        <i data-lucide="users" class="w-4 h-4 mb-0.5"></i>
+        <span class="font-mono text-[9px] tracking-wider uppercase">TERCEROS</span>
+      </button>
+      <button onclick="switchTab('servicios')" id="nav-servicios" class="nav-btn flex flex-col items-center py-1.5 text-ash border-t-2 border-transparent">
+        <i data-lucide="zap" class="w-4 h-4 mb-0.5"></i>
+        <span class="font-mono text-[9px] tracking-wider uppercase">SERVICIOS</span>
+      </button>
+      <button onclick="switchTab('respaldo')" id="nav-respaldo" class="nav-btn flex flex-col items-center py-1.5 text-ash border-t-2 border-transparent">
+        <i data-lucide="hard-drive-download" class="w-4 h-4 mb-0.5"></i>
+        <span class="font-mono text-[9px] tracking-wider uppercase">RESPALDO</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    const STORAGE_KEY = 'APOLLO_FINANCE_DB_V5';
+    const MONTHS_ES = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+    let currentMonthIdx = 10; // NOV
+    let currentYear = 2026;
+    let apolloInsightIndex = 0;
+    let currentPlacesFilter = 'CURRENT'; // 'CURRENT' | 'NEXT' | 'ALL'
+    let currentProductTypesFilter = 'CURRENT'; // 'CURRENT' | 'NEXT' | 'ALL'
+
+    // Default initial state demonstrating Credit Cards (TDC), Instant-Settled Debit Card (TDD), third party, recurring services & product types
+    function getDefaultDatabase() {
+      return {
+        cards: [
+          {
+            id: 'card-bbva',
+            cardType: 'TDC',
+            name: 'BBVA AZUL',
+            digits: '4821',
+            limit: 32000,
+            cutoffDay: 8,
+            dueDay: 28,
+            paidThisMonth: false,
+            charges: [
+              {
+                id: 'ch-1',
+                concept: 'MONITOR LG ULTRAGEAR 27"',
+                place: 'AMAZON',
+                productType: 'ELECTRÓNICA / HARDWARE',
+                purchaseDay: 4, // Día 4 <= Corte Día 8 -> ENTRA EN ESTE CORTE
+                totalAmount: 5400,
+                modality: 'MSI',
+                currentMonth: 2,
+                totalMonths: 6,
+                forceCycle: 'AUTO'
+              },
+              {
+                id: 'ch-2',
+                concept: 'DESPENSA Y ARTÍCULOS HOGAR',
+                place: 'HEB',
+                productType: 'ALIMENTOS Y BEBIDAS',
+                purchaseDay: 6, // Día 6 <= Corte Día 8 -> ENTRA EN ESTE CORTE
+                totalAmount: 1450,
+                modality: 'CONTADO',
+                currentMonth: 1,
+                totalMonths: 1,
+                forceCycle: 'AUTO'
+              },
+              {
+                id: 'ch-3',
+                concept: 'FIGURA EDICIÓN COLECCIONISTA',
+                place: 'MERCADO LIBRE',
+                productType: 'COLECCIONABLES / HOBBIES',
+                purchaseDay: 14, // Día 14 > Corte Día 8 -> POST-CORTE (PAGA PRÓXIMO MES)
+                totalAmount: 1890,
+                modality: 'CONTADO',
+                currentMonth: 1,
+                totalMonths: 1,
+                forceCycle: 'AUTO'
+              }
+            ]
+          },
+          {
+            id: 'card-nu',
+            cardType: 'TDC',
+            name: 'NU MORADA',
+            digits: '9104',
+            limit: 18000,
+            cutoffDay: 22,
+            dueDay: 10,
+            paidThisMonth: false,
+            charges: [
+              {
+                id: 'ch-4',
+                concept: 'VIAJES EJECUTIVOS SEMANA',
+                place: 'UBER',
+                productType: 'TRANSPORTE / MOVILIDAD',
+                purchaseDay: 16, // Día 16 <= Corte 22 -> EN CORTE ACTUAL
+                totalAmount: 680,
+                modality: 'CONTADO',
+                currentMonth: 1,
+                totalMonths: 1,
+                forceCycle: 'AUTO'
+              },
+              {
+                id: 'ch-5',
+                concept: 'SSD NVME 2TB',
+                place: 'AMAZON',
+                productType: 'ELECTRÓNICA / HARDWARE',
+                purchaseDay: 18, // Día 18 <= Corte 22 -> EN CORTE ACTUAL
+                totalAmount: 2700,
+                modality: 'MSI',
+                currentMonth: 1,
+                totalMonths: 3,
+                forceCycle: 'AUTO'
+              }
+            ]
+          },
+          {
+            id: 'card-debito-bbva',
+            cardType: 'TDD',
+            name: 'BBVA NÓMINA DÉBITO',
+            digits: '3309',
+            limit: 15000,
+            cutoffDay: 31,
+            dueDay: 1,
+            paidThisMonth: true, // Debit cards liquidate immediately
+            charges: [
+              {
+                id: 'ch-6',
+                concept: 'CAFÉ Y SNACKS OFICINA',
+                place: 'OXXO',
+                productType: 'ALIMENTOS Y BEBIDAS',
+                purchaseDay: 11,
+                totalAmount: 320,
+                modality: 'CONTADO',
+                currentMonth: 1,
+                totalMonths: 1,
+                forceCycle: 'CURRENT'
+              },
+              {
+                id: 'ch-7',
+                concept: 'JUEGO INDIE PC',
+                place: 'STEAM',
+                productType: 'ENTRETENIMIENTO / LIBROS',
+                purchaseDay: 15,
+                totalAmount: 450,
+                modality: 'CONTADO',
+                currentMonth: 1,
+                totalMonths: 1,
+                forceCycle: 'CURRENT'
+              }
+            ]
+          }
+        ],
+        thirdParty: [
+          {
+            id: 'tp-1',
+            person: 'CARLOS MÉNDEZ',
+            supportType: 'PRÉSTAMO TDC',
+            concept: 'BOLETO FESTIVAL / PREVENTA',
+            place: 'TICKETMASTER',
+            productType: 'ENTRETENIMIENTO / LIBROS',
+            bankInfo: 'BANREGIO CLABE *3310',
+            dueDay: 20,
+            monthlyAmount: 950,
+            currentInstallment: 2,
+            totalInstallments: 3,
+            paidThisMonth: false
+          },
+          {
+            id: 'tp-2',
+            person: 'ANA SOFÍA RUIZ',
+            supportType: 'GASTO COMPARTIDO',
+            concept: 'PERFUME DISEÑADOR',
+            place: 'LIVERPOOL',
+            productType: 'ROPA / ACCESORIOS / PERFUMERÍA',
+            bankInfo: 'BBVA TARJETA *7712',
+            dueDay: 12,
+            monthlyAmount: 600,
+            currentInstallment: 1,
+            totalInstallments: 1,
+            paidThisMonth: true
+          }
+        ],
+        services: [
+          {
+            id: 'srv-1',
+            name: 'GEMINI PRO AI',
+            category: 'SUSCRIPCIONES / SOFTWARE',
+            ref: 'GOOGLE-ONE-AI-2TB',
+            billingDay: 5, // Día 5 <= Corte 8 de BBVA -> Entra en estado de cuenta BBVA de este mes
+            cost: 395,
+            paymentMethod: 'card-bbva',
+            paidThisMonth: false
+          },
+          {
+            id: 'srv-2',
+            name: 'SMART FIT BLACK',
+            category: 'SALUD / GYM / DEPORTE',
+            ref: 'MEMBRESÍA #88412',
+            billingDay: 17,
+            cost: 599,
+            paymentMethod: 'DIRECTO',
+            paidThisMonth: false
+          },
+          {
+            id: 'srv-3',
+            name: 'INTERNET FIBRA ÓPTICA',
+            category: 'HOGAR / SERVICIOS BÁSICOS',
+            ref: 'CONTRATO 9941-22',
+            billingDay: 9,
+            cost: 649,
+            paymentMethod: 'DIRECTO',
+            paidThisMonth: false
+          }
+        ]
+      };
+    }
+
+    let db = loadDatabase();
+
+    function loadDatabase() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('APOLLO_FINANCE_DB_V4') || localStorage.getItem('APOLLO_FINANCE_DB_V3') || localStorage.getItem('APOLLO_FINANCE_DB_V2');
+        if (!raw) return getDefaultDatabase();
+        const parsed = JSON.parse(raw);
+        if (!parsed.cards || !parsed.thirdParty || !parsed.services) return getDefaultDatabase();
+        // Ensure backward compatibility with cardType and productType fields
+        parsed.cards.forEach(c => {
+          if (!c.cardType) c.cardType = 'TDC';
+          if (c.cardType === 'TDD' && typeof c.paidThisMonth !== 'boolean') {
+            c.paidThisMonth = true;
+          }
+          (c.charges || []).forEach(ch => {
+            if (!ch.productType) ch.productType = 'OTROS';
+          });
+        });
+        parsed.thirdParty.forEach(tp => {
+          if (!tp.productType) tp.productType = 'OTROS';
+        });
+        parsed.services.forEach(srv => {
+          if (!srv.category) srv.category = 'SUSCRIPCIONES / SOFTWARE';
+        });
+        return parsed;
+      } catch (e) {
+        return getDefaultDatabase();
+      }
+    }
+
+    function saveDatabase() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      renderAll();
+    }
+
+    function formatCurrency(val) {
+      const num = Number(val) || 0;
+      return '$' + num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // CORE CREDIT / DEBIT CARD CUTOFF EVALUATION RULE
+    // Debit cards (TDD) settle immediately in the current month and never defer to post-corte.
+    // Credit cards (TDC) evaluate Purchase Day <= Cutoff Day vs Post-Corte.
+    function isChargeInCurrentCutoff(charge, card) {
+      if (card.cardType === 'TDD') return true;
+      if (charge.forceCycle === 'CURRENT') return true;
+      if (charge.forceCycle === 'NEXT') return false;
+      // Ongoing MSI from prior months is part of the current statement
+      if (charge.modality === 'MSI' && Number(charge.currentMonth) > 1) {
+        return true;
+      }
+      // Standard TDC rule: Purchase Day <= Cutoff Day enters current billing statement;
+      // Purchase Day > Cutoff Day rolls over to next month's billing statement.
+      return Number(charge.purchaseDay) <= Number(card.cutoffDay);
+    }
+
+    function getChargeMonthlyInstallment(charge) {
+      if (charge.modality === 'MSI') {
+        const months = Math.max(1, Number(charge.totalMonths) || 1);
+        return Number(charge.totalAmount) / months;
+      }
+      return Number(charge.totalAmount) || 0;
+    }
+
+    // Calculate comprehensive financial breakdown for a specific card (TDC or TDD)
+    function calculateCardStatement(card) {
+      const isDebit = card.cardType === 'TDD';
+      let currentStatementContado = 0;
+      let currentStatementMsi = 0;
+      let currentStatementServices = 0;
+      let postCorteDeferredTotal = 0;
+      let nextMonthOngoingMsiTotal = 0;
+      let totalCreditUsed = 0;
+      const postCorteItems = [];
+      const nextMonthMsiItems = [];
+
+      card.charges.forEach(ch => {
+        const installment = getChargeMonthlyInstallment(ch);
+        const curM = Number(ch.currentMonth) || 1;
+        const totM = Number(ch.totalMonths) || 1;
+        const remainingMonths = (!isDebit && ch.modality === 'MSI') ? Math.max(1, (totM - curM + 1)) : 1;
+        totalCreditUsed += installment * remainingMonths;
+
+        const inCurrent = isChargeInCurrentCutoff(ch, card);
+
+        if (inCurrent) {
+          if (!isDebit && ch.modality === 'MSI') {
+            currentStatementMsi += installment;
+            // If there are still installments left after paying this month's installment, it continues next month
+            if (curM < totM) {
+              nextMonthOngoingMsiTotal += installment;
+              nextMonthMsiItems.push({
+                type: 'TDC_MSI',
+                cardName: card.name,
+                concept: ch.concept,
+                place: ch.place,
+                nextInstallmentLabel: `${curM + 1}/${totM}`,
+                amount: installment
+              });
+            }
+          } else {
+            currentStatementContado += installment;
+          }
+        } else {
+          // Purchased after cutoff on a TDC -> first payment hits next month's statement
+          postCorteDeferredTotal += installment;
+          postCorteItems.push({
+            cardName: card.name,
+            cardId: card.id,
+            cutoffDay: card.cutoffDay,
+            charge: ch,
+            installment
+          });
+        }
+      });
+
+      // Domiciled services linked to this card
+      const linkedServices = db.services.filter(s => s.paymentMethod === card.id);
+      linkedServices.forEach(srv => {
+        totalCreditUsed += Number(srv.cost);
+        if (isDebit || Number(srv.billingDay) <= Number(card.cutoffDay)) {
+          currentStatementServices += Number(srv.cost);
+        } else {
+          postCorteDeferredTotal += Number(srv.cost);
+          postCorteItems.push({
+            cardName: card.name,
+            cardId: card.id,
+            cutoffDay: card.cutoffDay,
+            isService: true,
+            service: srv,
+            installment: Number(srv.cost)
+          });
+        }
+      });
+
+      const currentMonthPaymentDue = currentStatementContado + currentStatementMsi + currentStatementServices;
+
+      return {
+        isDebit,
+        currentStatementContado,
+        currentStatementMsi,
+        currentStatementServices,
+        currentMonthPaymentDue,
+        postCorteDeferredTotal,
+        nextMonthOngoingMsiTotal,
+        postCorteItems,
+        nextMonthMsiItems,
+        totalCreditUsed,
+        linkedServices
+      };
+    }
+
+    // Master calculation of the entire system
+    function computeSystemMetrics() {
+      const monthlyChecklistItems = [];
+      let allPostCorteItems = [];
+      let allNextMonthMsiItems = [];
+
+      let totalMonthObligations = 0;
+      let totalMonthPaid = 0;
+      let totalDebitInstantSettled = 0;
+      let totalCreditMonthObligations = 0;
+      let totalPostCorte = 0;
+      let totalNextMonthMsi = 0;
+      let totalCreditLimit = 0;
+      let totalCreditUsed = 0;
+      let totalCurrentMsiLoad = 0;
+
+      // 1. Evaluate Credit (TDC) & Debit (TDD) Cards
+      db.cards.forEach(card => {
+        const st = calculateCardStatement(card);
+        const isDebit = st.isDebit;
+
+        if (!isDebit) {
+          totalCreditLimit += Number(card.limit) || 0;
+          totalCreditUsed += st.totalCreditUsed;
+          totalCurrentMsiLoad += st.currentStatementMsi;
+          totalPostCorte += st.postCorteDeferredTotal;
+          totalNextMonthMsi += st.nextMonthOngoingMsiTotal;
+
+          allPostCorteItems = allPostCorteItems.concat(st.postCorteItems);
+          allNextMonthMsiItems = allNextMonthMsiItems.concat(st.nextMonthMsiItems);
+        }
+
+        if (st.currentMonthPaymentDue > 0) {
+          totalMonthObligations += st.currentMonthPaymentDue;
+
+          if (isDebit) {
+            totalDebitInstantSettled += st.currentMonthPaymentDue;
+          } else {
+            totalCreditMonthObligations += st.currentMonthPaymentDue;
+          }
+
+          const isPaid = isDebit ? (card.paidThisMonth !== false) : !!card.paidThisMonth;
+          if (isPaid) totalMonthPaid += st.currentMonthPaymentDue;
+
+          monthlyChecklistItems.push({
+            type: 'TDC',
+            cardType: isDebit ? 'TDD' : 'TDC',
+            id: card.id,
+            title: `${isDebit ? 'TDD DÉBITO' : 'TDC CRÉDITO'} // ${card.name} (*${card.digits})`,
+            badge: isDebit
+              ? `DÉBITO • LIQUIDACIÓN INMEDIATA`
+              : `CORTE DÍA ${card.cutoffDay} • LÍMITE PAGO DÍA ${card.dueDay}`,
+            subtitle: isDebit
+              ? `COMPRAS DIRECTAS: ${formatCurrency(st.currentStatementContado)} | SERV. DOMICILIADOS: ${formatCurrency(st.currentStatementServices)}`
+              : `CONTADO: ${formatCurrency(st.currentStatementContado)} | MSI: ${formatCurrency(st.currentStatementMsi)} | SERV. DOM: ${formatCurrency(st.currentStatementServices)}`,
+            amount: st.currentMonthPaymentDue,
+            dueDay: isDebit ? 0 : (Number(card.dueDay) || 28),
+            paid: isPaid
+          });
+        }
+      });
+
+      // 2. Evaluate Third Party / Misc
+      db.thirdParty.forEach(tp => {
+        const amt = Number(tp.monthlyAmount) || 0;
+        totalMonthObligations += amt;
+        if (tp.paidThisMonth) totalMonthPaid += amt;
+
+        monthlyChecklistItems.push({
+          type: 'TERCERO',
+          id: tp.id,
+          title: `${tp.person} // ${tp.concept}`,
+          badge: `TERCERO • PAGO DÍA ${tp.dueDay}`,
+          subtitle: `${tp.supportType} EN ${tp.place} | MENSUALIDAD ${tp.currentInstallment}/${tp.totalInstallments} | ${tp.bankInfo}`,
+          amount: amt,
+          dueDay: Number(tp.dueDay) || 15,
+          paid: !!tp.paidThisMonth
+        });
+
+        // If third party support has remaining installments for next month
+        const curInst = Number(tp.currentInstallment) || 1;
+        const totInst = Number(tp.totalInstallments) || 1;
+        if (curInst < totInst) {
+          totalNextMonthMsi += amt;
+          allNextMonthMsiItems.push({
+            type: 'TERCERO_MSI',
+            cardName: `TERCERO: ${tp.person}`,
+            concept: tp.concept,
+            place: tp.place,
+            nextInstallmentLabel: `${curInst + 1}/${totInst}`,
+            amount: amt
+          });
+        }
+      });
+
+      // 3. Evaluate Direct Services (Not domiciled to TDC/TDD to prevent double counting)
+      db.services.forEach(srv => {
+        if (srv.paymentMethod === 'DIRECTO') {
+          const amt = Number(srv.cost) || 0;
+          totalMonthObligations += amt;
+          if (srv.paidThisMonth) totalMonthPaid += amt;
+
+          monthlyChecklistItems.push({
+            type: 'SERVICIO',
+            id: srv.id,
+            title: `SERVICIO // ${srv.name}`,
+            badge: `COBRO DÍA ${srv.billingDay} • DIRECTO`,
+            subtitle: `${srv.category} | REF: ${srv.ref}`,
+            amount: amt,
+            dueDay: Number(srv.billingDay) || 1,
+            paid: !!srv.paidThisMonth
+          });
+        }
+      });
+
+      // 4. Aggregate Places / Establishments with Filter Support ('CURRENT', 'NEXT', 'ALL')
+      const placesMap = {};
+      const addPlaceRecord = (rawPlace, val, categoryLabel) => {
+        const key = (rawPlace || 'OTRO').toUpperCase().trim();
+        if (!placesMap[key]) placesMap[key] = { name: key, amount: 0, count: 0, sources: new Set() };
+        placesMap[key].amount += val;
+        placesMap[key].count += 1;
+        placesMap[key].sources.add(categoryLabel);
+      };
+
+      db.cards.forEach(card => {
+        const tagPrefix = card.cardType === 'TDD' ? `TDD ${card.name}` : `TDC ${card.name}`;
+        card.charges.forEach(ch => {
+          const inCurrent = isChargeInCurrentCutoff(ch, card);
+          const val = getChargeMonthlyInstallment(ch);
+          if (currentPlacesFilter === 'CURRENT' && inCurrent) {
+            addPlaceRecord(ch.place, val, tagPrefix);
+          } else if (currentPlacesFilter === 'NEXT' && !inCurrent) {
+            addPlaceRecord(ch.place, val, `${tagPrefix} (POST-CORTE)`);
+          } else if (currentPlacesFilter === 'ALL') {
+            addPlaceRecord(ch.place, val, tagPrefix);
+          }
+        });
+      });
+
+      if (currentPlacesFilter === 'CURRENT' || currentPlacesFilter === 'ALL') {
+        db.thirdParty.forEach(tp => {
+          addPlaceRecord(tp.place, Number(tp.monthlyAmount) || 0, `TERCERO (${tp.person})`);
+        });
+      }
+
+      db.services.forEach(srv => {
+        const card = db.cards.find(c => c.id === srv.paymentMethod);
+        const inCurrent = card ? (card.cardType === 'TDD' || Number(srv.billingDay) <= Number(card.cutoffDay)) : true;
+        const val = Number(srv.cost) || 0;
+        if (currentPlacesFilter === 'CURRENT' && inCurrent) {
+          addPlaceRecord(srv.name, val, card ? `DOM. ${card.name}` : 'SERVICIO DIRECTO');
+        } else if (currentPlacesFilter === 'NEXT' && !inCurrent) {
+          addPlaceRecord(srv.name, val, `POST-CORTE ${card ? card.name : ''}`);
+        } else if (currentPlacesFilter === 'ALL') {
+          addPlaceRecord(srv.name, val, card ? `DOM. ${card.name}` : 'SERVICIO DIRECTO');
+        }
+      });
+
+      const placesArray = Object.values(placesMap)
+        .map(p => ({ ...p, sourcesList: Array.from(p.sources).join(', ') }))
+        .sort((a, b) => b.amount - a.amount);
+
+      // 5. Aggregate Product / Service Types with Filter Support ('CURRENT', 'NEXT', 'ALL')
+      const productTypesMap = {};
+      const addProductTypeRecord = (rawType, val, itemDetail) => {
+        const key = (rawType || 'OTROS').toUpperCase().trim();
+        if (!productTypesMap[key]) productTypesMap[key] = { name: key, amount: 0, count: 0, items: [] };
+        productTypesMap[key].amount += val;
+        productTypesMap[key].count += 1;
+        if (itemDetail && productTypesMap[key].items.length < 5) {
+          productTypesMap[key].items.push(itemDetail);
+        }
+      };
+
+      db.cards.forEach(card => {
+        card.charges.forEach(ch => {
+          const inCurrent = isChargeInCurrentCutoff(ch, card);
+          const val = getChargeMonthlyInstallment(ch);
+          const pType = ch.productType || 'OTROS';
+          const detail = `${ch.concept} (${ch.place})`;
+          if (currentProductTypesFilter === 'CURRENT' && inCurrent) {
+            addProductTypeRecord(pType, val, detail);
+          } else if (currentProductTypesFilter === 'NEXT' && !inCurrent) {
+            addProductTypeRecord(pType, val, `${detail} [POST-CORTE]`);
+          } else if (currentProductTypesFilter === 'ALL') {
+            addProductTypeRecord(pType, val, detail);
+          }
+        });
+      });
+
+      if (currentProductTypesFilter === 'CURRENT' || currentProductTypesFilter === 'ALL') {
+        db.thirdParty.forEach(tp => {
+          const pType = tp.productType || 'OTROS';
+          addProductTypeRecord(pType, Number(tp.monthlyAmount) || 0, `${tp.concept} (${tp.person})`);
+        });
+      }
+
+      db.services.forEach(srv => {
+        const card = db.cards.find(c => c.id === srv.paymentMethod);
+        const inCurrent = card ? (card.cardType === 'TDD' || Number(srv.billingDay) <= Number(card.cutoffDay)) : true;
+        const val = Number(srv.cost) || 0;
+        const pType = srv.category || 'SUSCRIPCIONES / SOFTWARE';
+        if (currentProductTypesFilter === 'CURRENT' && inCurrent) {
+          addProductTypeRecord(pType, val, srv.name);
+        } else if (currentProductTypesFilter === 'NEXT' && !inCurrent) {
+          addProductTypeRecord(pType, val, `${srv.name} [POST-CORTE]`);
+        } else if (currentProductTypesFilter === 'ALL') {
+          addProductTypeRecord(pType, val, srv.name);
+        }
+      });
+
+      const productTypesArray = Object.values(productTypesMap)
+        .map(pt => ({ ...pt, itemsSummary: pt.items.join(' • ') }))
+        .sort((a, b) => b.amount - a.amount);
+
+      const totalMonthPending = Math.max(0, totalMonthObligations - totalMonthPaid);
+      const totalNextMonthProjected = totalPostCorte + totalNextMonthMsi;
+
+      return {
+        monthlyChecklistItems: monthlyChecklistItems.sort((a, b) => a.dueDay - b.dueDay),
+        allPostCorteItems,
+        allNextMonthMsiItems,
+        totalMonthObligations,
+        totalMonthPaid,
+        totalMonthPending,
+        totalDebitInstantSettled,
+        totalCreditMonthObligations,
+        totalPostCorte,
+        totalNextMonthMsi,
+        totalNextMonthProjected,
+        totalCreditLimit,
+        totalCreditUsed,
+        totalCurrentMsiLoad,
+        placesArray,
+        productTypesArray
+      };
+    }
+
+    // ==================== APOLLO PURE DATA ANALYSIS ENGINE ====================
+    function generateApolloAnalyticalInsights(metrics) {
+      const utilizationPct = metrics.totalCreditLimit > 0
+        ? ((metrics.totalCreditUsed / metrics.totalCreditLimit) * 100).toFixed(1)
+        : '0.0';
+
+      const paidPct = metrics.totalMonthObligations > 0
+        ? ((metrics.totalMonthPaid / metrics.totalMonthObligations) * 100).toFixed(1)
+        : '0.0';
+
+      const msiSharePct = metrics.totalMonthObligations > 0
+        ? ((metrics.totalCurrentMsiLoad / metrics.totalMonthObligations) * 100).toFixed(1)
+        : '0.0';
+
+      const debitSharePct = metrics.totalMonthObligations > 0
+        ? ((metrics.totalDebitInstantSettled / metrics.totalMonthObligations) * 100).toFixed(1)
+        : '0.0';
+
+      const topPlace = metrics.placesArray.length > 0 ? metrics.placesArray[0] : null;
+      const topProductType = metrics.productTypesArray.length > 0 ? metrics.productTypesArray[0] : null;
+      const pendingItemsCount = metrics.monthlyChecklistItems.filter(i => !i.paid).length;
+
+      return [
+        `ESTADO DE LIQUIDACIÓN MENSUAL: El gasto total del mes es de ${formatCurrency(metrics.totalMonthObligations)}. Se encuentra liquidado el ${paidPct}% (${formatCurrency(metrics.totalMonthPaid)}, incluyendo débito automático) y resta un saldo por cubrir de ${formatCurrency(metrics.totalMonthPending)} en ${pendingItemsCount} obligación(es).`,
+        `RELACIÓN CRÉDITO (TDC) VS DÉBITO (TDD): En este ciclo mensual, ${formatCurrency(metrics.totalDebitInstantSettled)} (${debitSharePct}%) corresponden a pagos con Tarjeta de Débito liquidados al instante y ${formatCurrency(metrics.totalCreditMonthObligations)} a estados de cuenta de Tarjetas de Crédito.`,
+        `PROYECCIÓN PARA EL PRÓXIMO MES: Tienes acumulados ${formatCurrency(metrics.totalNextMonthProjected)} para el siguiente ciclo mensual, compuestos por ${formatCurrency(metrics.totalPostCorte)} en compras TDC post-corte y ${formatCurrency(metrics.totalNextMonthMsi)} en mensualidades MSI/Terceros que continúan vigentes.`,
+        `UTILIZACIÓN DE LÍNEA DE CRÉDITO (TDC): La deuda total comprometida en tus tarjetas de crédito es de ${formatCurrency(metrics.totalCreditUsed)} sobre un límite conjunto de ${formatCurrency(metrics.totalCreditLimit)}, ubicando tu utilización crediticia en ${utilizationPct}%.`,
+        `CARGA DE MESES SIN INTERESES (MSI): Las parcialidades activas de MSI en este corte suman ${formatCurrency(metrics.totalCurrentMsiLoad)}, equivalentes al ${msiSharePct}% de tus obligaciones del mes.`,
+        topPlace
+          ? `CONCENTRACIÓN POR ESTABLECIMIENTO/APP: El mayor volumen de gasto en la vista seleccionada corresponde a ${topPlace.name} con ${formatCurrency(topPlace.amount)} (${topPlace.count} cargo(s) registrado(s)).`
+          : `CONCENTRACIÓN POR ESTABLECIMIENTO: Sin cargos registrados en el filtro actual de establecimientos.`,
+        topProductType
+          ? `ANÁLISIS POR TIPO DE PRODUCTO/SERVICIO: La categoría con mayor absorción de capital es ${topProductType.name} con ${formatCurrency(topProductType.amount)} (${topProductType.count} movimiento(s): ${topProductType.itemsSummary}).`
+          : `ANÁLISIS POR TIPO DE PRODUCTO/SERVICIO: Sin registros para el filtro actual de categorías.`
+      ];
+    }
+
+    function updateApolloWidget(metrics) {
+      const insights = generateApolloAnalyticalInsights(metrics);
+      const idx = apolloInsightIndex % insights.length;
+      document.getElementById('apolloSpeech').textContent = insights[idx];
+      document.getElementById('apolloMetricTag').textContent = `ANÁLISIS ${idx + 1}/${insights.length}`;
+    }
+
+    function cycleApolloAnalysis() {
+      apolloInsightIndex++;
+      const metrics = computeSystemMetrics();
+      updateApolloWidget(metrics);
+    }
+
+    // ==================== RENDER FUNCTIONS ====================
+    function renderAll() {
+      document.getElementById('activePeriodLabel').textContent = `${MONTHS_ES[currentMonthIdx]} ${currentYear}`;
+      const metrics = computeSystemMetrics();
+
+      // Update Apollo Data Analysis
+      updateApolloWidget(metrics);
+
+      // Update Top KPIs
+      document.getElementById('kpiMonthTotal').textContent = formatCurrency(metrics.totalMonthObligations);
+      document.getElementById('kpiMonthPending').textContent = formatCurrency(metrics.totalMonthPending);
+      document.getElementById('kpiMonthPaid').textContent = formatCurrency(metrics.totalMonthPaid);
+
+      document.getElementById('kpiNextMonthTotal').textContent = formatCurrency(metrics.totalNextMonthProjected);
+      document.getElementById('kpiNextPostCorte').textContent = formatCurrency(metrics.totalPostCorte);
+      document.getElementById('kpiNextMsi').textContent = formatCurrency(metrics.totalNextMonthMsi);
+
+      renderDashboardBlocks(metrics);
+      renderCardsTab();
+      renderThirdPartyTab();
+      renderServicesTab();
+      lucide.createIcons();
+    }
+
+    function renderDashboardBlocks(metrics) {
+      // 1. Render Unified Monthly Checklist
+      const checklistEl = document.getElementById('monthlyChecklistContainer');
+      const pendingCount = metrics.monthlyChecklistItems.filter(i => !i.paid).length;
+      const totalItems = metrics.monthlyChecklistItems.length;
+      const paidPct = metrics.totalMonthObligations > 0
+        ? Math.round((metrics.totalMonthPaid / metrics.totalMonthObligations) * 100)
+        : (totalItems === 0 ? 100 : 0);
+
+      document.getElementById('badgeMonthChecklistStatus').textContent = pendingCount === 0 && totalItems > 0
+        ? 'MES LIQUIDADO ✓'
+        : `${pendingCount} PENDIENTE(S)`;
+      document.getElementById('checklistProgressLabel').textContent = `${paidPct}% PAGADO (${formatCurrency(metrics.totalMonthPaid)} / ${formatCurrency(metrics.totalMonthObligations)})`;
+      document.getElementById('checklistProgressBar').style.width = `${paidPct}%`;
+
+      if (totalItems === 0) {
+        checklistEl.innerHTML = `
+          <div class="p-3 bg-abyss/60 border border-mist text-center font-mono text-xs text-ash">
+            SIN OBLIGACIONES ACTIVAS PARA ESTE MES
+          </div>`;
+      } else {
+        checklistEl.innerHTML = metrics.monthlyChecklistItems.map(item => {
+          const isDebitCard = item.cardType === 'TDD';
+          const statusLabel = isDebitCard && item.paid
+            ? 'LIQUIDADO AL INSTANTE ✓'
+            : (item.paid ? 'PAGADO ✓' : 'PENDIENTE');
+          const badgeStyle = isDebitCard
+            ? 'bg-sage/20 border-sage text-sage'
+            : 'bg-abyss border-mist text-ochre';
+
+          return `
+          <div onclick="toggleItemPaid('${item.type}', '${item.id}')" class="cyber-card-sm p-3 flex items-center justify-between gap-3 cursor-pointer transition-all ${item.paid ? 'opacity-75 border-sage/60 bg-abyss/60' : 'border-l-2 border-l-eclipse hover:border-sand/40'}">
+            <div class="flex items-start gap-3 min-w-0">
+              <button type="button" class="mt-0.5 w-5 h-5 flex-shrink-0 border ${item.paid ? 'bg-sage border-sage text-abyss' : 'border-terracotta bg-abyss text-transparent'} flex items-center justify-center font-mono text-xs font-bold">
+                ✓
+              </button>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-mono text-xs font-bold text-sand ${item.paid ? 'line-through text-ash' : ''}">${item.title}</span>
+                  <span class="font-mono text-[9px] px-1.5 py-0.5 border ${badgeStyle}">${item.badge}</span>
+                </div>
+                <p class="font-mono text-[10px] text-ash truncate mt-1">${item.subtitle}</p>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <div class="font-mono text-sm font-bold ${item.paid ? 'text-sage line-through' : 'text-sand'}">${formatCurrency(item.amount)}</div>
+              <span class="font-mono text-[9px] uppercase ${item.paid ? 'text-sage font-bold' : 'text-terracotta'}">${statusLabel}</span>
+            </div>
+          </div>
+        `}).join('');
+      }
+
+      // 2. Render Next Month Section (A: Post-Corte + B: Ongoing MSI)
+      const postCorteEl = document.getElementById('postCorteList');
+      const nextMsiEl = document.getElementById('nextMonthMsiList');
+      const totalNextCount = metrics.allPostCorteItems.length + metrics.allNextMonthMsiItems.length;
+
+      document.getElementById('badgeNextMonthCount').textContent = `${totalNextCount} COMPROMISO(S)`;
+      document.getElementById('subTotalPostCorte').textContent = formatCurrency(metrics.totalPostCorte);
+      document.getElementById('subTotalNextMsi').textContent = formatCurrency(metrics.totalNextMonthMsi);
+
+      if (metrics.allPostCorteItems.length === 0) {
+        postCorteEl.innerHTML = `
+          <div class="p-2.5 bg-abyss/60 border border-mist text-center font-mono text-[11px] text-ash">
+            NINGUNA COMPRA POST-CORTE REGISTRADA EN ESTE CICLO
+          </div>`;
+      } else {
+        postCorteEl.innerHTML = metrics.allPostCorteItems.map(item => {
+          if (item.isService) {
+            return `
+              <div class="p-2 bg-abyss border border-mist flex items-center justify-between text-xs font-mono">
+                <div>
+                  <span class="text-ochre font-bold">[POST-CORTE ${item.cardName}]</span>
+                  <span class="text-sand ml-1">${item.service.name}</span>
+                  <span class="text-ash text-[10px] block">COBRO DÍA ${item.service.billingDay} &gt; CORTE DÍA ${item.cutoffDay} ➔ ENTRA EN EL PRÓXIMO MES</span>
+                </div>
+                <span class="text-ochre font-bold">${formatCurrency(item.installment)}</span>
+              </div>`;
+          }
+          return `
+            <div class="p-2 bg-abyss border border-mist flex items-center justify-between text-xs font-mono">
+              <div>
+                <span class="text-ochre font-bold">[POST-CORTE ${item.cardName}]</span>
+                <span class="text-sand ml-1">${item.charge.concept} (${item.charge.place})</span>
+                <span class="text-ash text-[10px] block">COMPRA DÍA ${item.charge.purchaseDay} &gt; CORTE DÍA ${item.cutoffDay} ➔ PASA AL PRÓXIMO MES</span>
+              </div>
+              <div class="text-right">
+                <span class="text-ochre font-bold block">${formatCurrency(item.installment)}</span>
+                <button onclick="toggleChargeCycleForce('${item.cardId}', '${item.charge.id}')" class="text-[9px] text-ash underline hover:text-sand">MOVER A ESTE MES</button>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      if (metrics.allNextMonthMsiItems.length === 0) {
+        nextMsiEl.innerHTML = `
+          <div class="p-2.5 bg-abyss/60 border border-mist text-center font-mono text-[11px] text-ash">
+            SIN MENSUALIDADES MSI PENDIENTES PARA EL PRÓXIMO MES
+          </div>`;
+      } else {
+        nextMsiEl.innerHTML = metrics.allNextMonthMsiItems.map(item => `
+          <div class="p-2 bg-abyss/80 border border-mist flex items-center justify-between text-xs font-mono">
+            <div>
+              <span class="text-sand font-bold">${item.concept}</span>
+              <span class="text-terracotta text-[10px] ml-1">(${item.place})</span>
+              <span class="text-ash text-[10px] block">${item.cardName} • PRÓXIMO PAGO: MENSUALIDAD ${item.nextInstallmentLabel}</span>
+            </div>
+            <span class="text-sand font-bold">${formatCurrency(item.amount)}</span>
+          </div>
+        `).join('');
+      }
+
+      // 3. Render Establishment / Application Board
+      const placesEl = document.getElementById('placesDistributionList');
+      const grandTotalPlaces = metrics.placesArray.reduce((acc, p) => acc + p.amount, 0) || 1;
+
+      if (metrics.placesArray.length === 0) {
+        placesEl.innerHTML = `<div class="text-center font-mono text-xs text-ash py-3">SIN GASTOS REGISTRADOS EN ESTE FILTRO</div>`;
+      } else {
+        placesEl.innerHTML = metrics.placesArray.map(place => {
+          const pct = Math.min(100, ((place.amount / grandTotalPlaces) * 100)).toFixed(1);
+          return `
+            <div class="bg-abyss/80 border border-mist p-2.5">
+              <div class="flex items-center justify-between font-mono text-xs mb-1">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="font-bold text-sand truncate">${place.name}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 bg-panel text-ash flex-shrink-0">${place.count} CARGO(S)</span>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="font-bold text-sand">${formatCurrency(place.amount)}</span>
+                  <span class="text-[10px] text-terracotta ml-1">(${pct}%)</span>
+                </div>
+              </div>
+              <div class="text-[10px] font-mono text-ash mb-1.5 truncate">ORIGEN: ${place.sourcesList}</div>
+              <div class="w-full h-1.5 bg-panel overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-eclipse to-ochre" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 4. Render Product / Service Type Board
+      const productTypesEl = document.getElementById('productTypesDistributionList');
+      const badgeProductsCount = document.getElementById('badgeProductTypesCount');
+      const grandTotalProductTypes = metrics.productTypesArray.reduce((acc, pt) => acc + pt.amount, 0) || 1;
+
+      badgeProductsCount.textContent = `${metrics.productTypesArray.length} CATEGORÍA(S)`;
+
+      if (metrics.productTypesArray.length === 0) {
+        productTypesEl.innerHTML = `<div class="text-center font-mono text-xs text-ash py-3">SIN GASTOS REGISTRADOS EN ESTE FILTRO DE PRODUCTOS/SERVICIOS</div>`;
+      } else {
+        productTypesEl.innerHTML = metrics.productTypesArray.map(pt => {
+          const pct = Math.min(100, ((pt.amount / grandTotalProductTypes) * 100)).toFixed(1);
+          return `
+            <div class="bg-abyss/80 border border-mist p-2.5">
+              <div class="flex items-center justify-between font-mono text-xs mb-1">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-1.5 h-1.5 bg-sage inline-block flex-shrink-0"></span>
+                  <span class="font-bold text-sand truncate">${pt.name}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 bg-panel border border-mist text-ochre flex-shrink-0">${pt.count} ITEM(S)</span>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="font-bold text-sand">${formatCurrency(pt.amount)}</span>
+                  <span class="text-[10px] text-sage ml-1">(${pct}%)</span>
+                </div>
+              </div>
+              <div class="text-[10px] font-mono text-ash mb-1.5 truncate">DETALLE: ${pt.itemsSummary}</div>
+              <div class="w-full h-1.5 bg-panel overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-sage via-ochre to-terracotta" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function setPlacesFilter(filterMode) {
+      currentPlacesFilter = filterMode;
+      ['CURRENT', 'NEXT', 'ALL'].forEach(mode => {
+        const btn = document.getElementById(`filterPlaces-${mode}`);
+        if (mode === filterMode) {
+          btn.className = 'py-1.5 px-2 bg-panel text-terracotta border border-terracotta/50 font-bold';
+        } else {
+          btn.className = 'py-1.5 px-2 text-ash hover:text-sand';
+        }
+      });
+      renderAll();
+    }
+
+    function setProductTypesFilter(filterMode) {
+      currentProductTypesFilter = filterMode;
+      ['CURRENT', 'NEXT', 'ALL'].forEach(mode => {
+        const btn = document.getElementById(`filterProducts-${mode}`);
+        if (mode === filterMode) {
+          btn.className = 'py-1.5 px-2 bg-panel text-sage border border-sage/50 font-bold';
+        } else {
+          btn.className = 'py-1.5 px-2 text-ash hover:text-sand';
+        }
+      });
+      renderAll();
+    }
+
+    function resetMonthlyChecks() {
+      // Credit cards, third-party and direct services reset to pending;
+      // Debit cards (TDD) remain automatically liquidated because they settle at purchase time.
+      db.cards.forEach(c => {
+        c.paidThisMonth = (c.cardType === 'TDD');
+      });
+      db.thirdParty.forEach(t => t.paidThisMonth = false);
+      db.services.forEach(s => s.paidThisMonth = false);
+      saveDatabase();
+      showToast('CHECKLIST REINICIADO (DÉBITO TDD SE MANTIENE LIQUIDADO)');
+    }
+
+    function renderCardsTab() {
+      const container = document.getElementById('cardsContainer');
+      if (db.cards.length === 0) {
+        container.innerHTML = `<div class="cyber-card p-6 text-center font-mono text-xs text-ash">NO HAY TARJETAS REGISTRADAS. AGREGA UNA TDC O TDD PARA INICIAR.</div>`;
+        return;
+      }
+
+      container.innerHTML = db.cards.map(card => {
+        const isDebit = card.cardType === 'TDD';
+        const st = calculateCardStatement(card);
+        const usedPct = card.limit > 0 ? Math.min(100, ((st.totalCreditUsed / card.limit) * 100)).toFixed(1) : 0;
+
+        const typeBadge = isDebit
+          ? `<span class="px-2 py-0.5 bg-sage/20 border border-sage text-sage font-mono text-[10px] font-bold">TDD // DÉBITO</span>`
+          : `<span class="px-2 py-0.5 bg-panel border border-ochre/60 text-ochre font-mono text-[10px] font-bold">TDC // CRÉDITO</span>`;
+
+        const paidBadge = isDebit
+          ? `<span class="px-2 py-0.5 bg-sage/20 border border-sage text-sage font-mono text-[10px]">LIQUIDACIÓN INMEDIATA ✓</span>`
+          : (card.paidThisMonth
+              ? `<span class="px-2 py-0.5 bg-sage/20 border border-sage text-sage font-mono text-[10px]">ESTADO DEL MES: PAGADA ✓</span>`
+              : `<span class="px-2 py-0.5 bg-eclipse/20 border border-eclipse text-terracotta font-mono text-[10px]">ESTADO DEL MES: PENDIENTE</span>`);
+
+        const chargesHtml = card.charges.length === 0
+          ? `<div class="p-3 text-center font-mono text-xs text-ash bg-abyss border border-mist">SIN COMPRAS REGISTRADAS EN ESTA TARJETA</div>`
+          : card.charges.map(ch => {
+              const inCurrent = isChargeInCurrentCutoff(ch, card);
+              const installment = getChargeMonthlyInstallment(ch);
+              const cutoffBadge = isDebit
+                ? `<span class="px-1.5 py-0.5 bg-sage/20 border border-sage/60 text-sage font-mono text-[9px]">DÉBITO // LIQUIDADO AL INSTANTE ✓</span>`
+                : (inCurrent
+                    ? `<span class="px-1.5 py-0.5 bg-sage/20 border border-sage/60 text-sage font-mono text-[9px]">EN CORTE ACTUAL (ESTE MES)</span>`
+                    : `<span class="px-1.5 py-0.5 bg-ochre/20 border border-ochre/60 text-ochre font-mono text-[9px]">POST-CORTE (PRÓXIMO MES)</span>`);
+
+              const msiControls = (!isDebit && ch.modality === 'MSI')
+                ? `<div class="flex items-center gap-1 mt-1">
+                     <span class="font-mono text-[10px] px-1.5 py-0.5 bg-panel border border-ochre/50 text-ochre">MSI ${ch.currentMonth}/${ch.totalMonths}</span>
+                     <button onclick="stepChargeMsi('${card.id}', '${ch.id}', -1)" class="px-1.5 py-0.5 bg-abyss border border-mist text-ash hover:text-sand font-mono text-[10px]">-</button>
+                     <button onclick="stepChargeMsi('${card.id}', '${ch.id}', 1)" class="px-1.5 py-0.5 bg-abyss border border-mist text-ash hover:text-sand font-mono text-[10px]">+</button>
+                     <span class="font-mono text-[10px] text-ash ml-1">(TOTAL: ${formatCurrency(ch.totalAmount)})</span>
+                   </div>`
+                : `<div class="mt-1"><span class="font-mono text-[10px] px-1.5 py-0.5 bg-abyss border border-mist text-ash">${isDebit ? 'CARGO DIRECTO DÉBITO' : 'CONTADO (1 PAGO)'}</span></div>`;
+
+              return `
+                <div class="p-2.5 bg-abyss border ${inCurrent ? 'border-mist' : 'border-ochre/50'} flex items-start justify-between gap-2">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="font-mono text-xs font-bold text-sand">${ch.concept}</span>
+                      <span class="font-mono text-[10px] px-1.5 py-0.5 bg-panel text-terracotta">${ch.place}</span>
+                      <span class="font-mono text-[9px] px-1.5 py-0.5 bg-abyss border border-sage/50 text-sage">${ch.productType || 'OTROS'}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                      <span class="font-mono text-[10px] text-ash">${isDebit ? `COMPRA: DÍA ${ch.purchaseDay}` : `COMPRA: DÍA ${ch.purchaseDay} (CORTE: DÍA ${card.cutoffDay})`}</span>
+                      ${cutoffBadge}
+                    </div>
+                    ${msiControls}
+                  </div>
+                  <div class="text-right flex-shrink-0">
+                    <div class="font-mono text-sm font-bold ${isDebit ? 'text-sage' : (inCurrent ? 'text-sand' : 'text-ochre')}">${formatCurrency(installment)}</div>
+                    <div class="font-mono text-[9px] text-ash">${(!isDebit && ch.modality === 'MSI') ? 'MENSUALIDAD' : 'MONTO'}</div>
+                    <div class="flex items-center justify-end gap-1.5 mt-1.5">
+                      ${!isDebit ? `
+                      <button onclick="toggleChargeCycleForce('${card.id}', '${ch.id}')" class="font-mono text-[9px] px-1.5 py-0.5 bg-panel border border-mist text-ash hover:text-sand" title="Alternar entre corte de este mes o próximo mes">
+                        ⇄ CORTE
+                      </button>` : ''}
+                      <button onclick="deleteCharge('${card.id}', '${ch.id}')" class="font-mono text-[9px] px-1.5 py-0.5 bg-panel border border-mist text-eclipse hover:bg-eclipse hover:text-abyss">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+        const domiciledHtml = st.linkedServices.length > 0
+          ? `<div class="mt-2 pt-2 border-t border-mist">
+               <span class="block font-mono text-[10px] text-ash uppercase mb-1">SERVICIOS DOMICILIADOS A ESTA TARJETA:</span>
+               <div class="space-y-1">
+                 ${st.linkedServices.map(s => {
+                   const inCut = isDebit || (Number(s.billingDay) <= Number(card.cutoffDay));
+                   return `<div class="flex items-center justify-between text-[11px] font-mono bg-abyss/60 px-2 py-1 border border-mist">
+                     <span>${s.name} (COBRO DÍA ${s.billingDay})</span>
+                     <span class="${isDebit ? 'text-sage' : (inCut ? 'text-sand' : 'text-ochre')}">${formatCurrency(s.cost)} ${isDebit ? '[LIQUIDADO TDD ✓]' : (inCut ? '[EN CORTE ACTUAL]' : '[POST-CORTE]')}</span>
+                   </div>`;
+                 }).join('')}
+               </div>
+             </div>`
+          : '';
+
+        return `
+          <div class="cyber-card p-4 space-y-3 ${isDebit ? 'border-l-2 border-l-sage' : 'border-l-2 border-l-eclipse'}">
+            <div class="flex items-start justify-between border-b border-mist pb-3">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  ${typeBadge}
+                  <h3 class="font-mono text-base font-bold text-sand">${card.name}</h3>
+                  <span class="font-mono text-xs text-ash">*${card.digits}</span>
+                  ${paidBadge}
+                </div>
+                <div class="font-mono text-xs text-ochre mt-1">
+                  ${isDebit
+                    ? `<span class="text-sage">MODO DÉBITO: CADA CARGO SE DESCUENTA Y APARECE LIQUIDADO AL INSTANTE EN EL TABLERO</span>`
+                    : `FECHA DE CORTE: <strong class="text-sand">DÍA ${card.cutoffDay}</strong> &nbsp;|&nbsp; FECHA LÍMITE DE PAGO: <strong class="text-sand">DÍA ${card.dueDay}</strong>`
+                  }
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button onclick="openChargeModalForCard('${card.id}')" class="cyber-btn ${isDebit ? 'bg-sage' : 'bg-eclipse'} text-abyss font-mono text-[10px] font-bold px-2.5 py-1.5">
+                  + COMPRA
+                </button>
+                <button onclick="deleteCard('${card.id}')" class="px-2 py-1 bg-panel border border-mist text-ash hover:text-eclipse font-mono text-xs" title="Eliminar tarjeta">
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <!-- Statement Financial Summary -->
+            ${isDebit ? `
+            <div class="grid grid-cols-3 gap-2 bg-panel/70 p-2.5 border border-mist font-mono">
+              <div>
+                <span class="text-[9px] text-ash block">GASTO LIQUIDADO (MES)</span>
+                <span class="text-sm font-bold text-sage">${formatCurrency(st.currentMonthPaymentDue)}</span>
+              </div>
+              <div>
+                <span class="text-[9px] text-ash block">PRESUPUESTO / SALDO REF.</span>
+                <span class="text-sm font-bold text-sand">${formatCurrency(card.limit)}</span>
+              </div>
+              <div>
+                <span class="text-[9px] text-ash block">SALDO RESTANTE EST.</span>
+                <span class="text-sm font-bold text-ochre">${formatCurrency(Math.max(0, card.limit - st.totalCreditUsed))}</span>
+              </div>
+            </div>
+            ` : `
+            <div class="grid grid-cols-3 gap-2 bg-panel/70 p-2.5 border border-mist font-mono">
+              <div>
+                <span class="text-[9px] text-ash block">PAGO DEL MES</span>
+                <span class="text-sm font-bold text-terracotta">${formatCurrency(st.currentMonthPaymentDue)}</span>
+              </div>
+              <div>
+                <span class="text-[9px] text-ash block">POST-CORTE (PRÓX. MES)</span>
+                <span class="text-sm font-bold text-ochre">${formatCurrency(st.postCorteDeferredTotal)}</span>
+              </div>
+              <div>
+                <span class="text-[9px] text-ash block">CRÉDITO DISPONIBLE</span>
+                <span class="text-sm font-bold text-sand">${formatCurrency(Math.max(0, card.limit - st.totalCreditUsed))}</span>
+              </div>
+            </div>
+            `}
+
+            <!-- Limit / Budget Bar -->
+            <div>
+              <div class="flex justify-between font-mono text-[10px] text-ash mb-1">
+                <span>${isDebit ? 'CONSUMO SOBRE SALDO/PRESUPUESTO' : 'USO DE LÍNEA'}: ${formatCurrency(st.totalCreditUsed)} / ${formatCurrency(card.limit)}</span>
+                <span>${usedPct}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-abyss border border-mist">
+                <div class="h-full ${isDebit ? 'bg-sage' : 'bg-eclipse'}" style="width: ${usedPct}%"></div>
+              </div>
+            </div>
+
+            <!-- List of Purchases -->
+            <div class="space-y-2">
+              <div class="font-mono text-[10px] text-ash uppercase tracking-wider">${isDebit ? 'DESGLOSE DE CARGOS DE DÉBITO (LIQUIDADOS AL INSTANTE):' : 'DESGLOSE DE COMPRAS (CONTADO Y MSI):'}</div>
+              ${chargesHtml}
+            </div>
+
+            ${domiciledHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderThirdPartyTab() {
+      const container = document.getElementById('thirdPartyContainer');
+      if (db.thirdParty.length === 0) {
+        container.innerHTML = `<div class="cyber-card p-6 text-center font-mono text-xs text-ash">SIN PAGOS A TERCEROS REGISTRADOS.</div>`;
+        return;
+      }
+
+      container.innerHTML = db.thirdParty.map(tp => {
+        return `
+          <div class="cyber-card p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-mono text-sm font-bold text-sand">${tp.person}</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-panel border border-mist text-ochre">${tp.supportType}</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-sage/50 text-sage">${tp.productType || 'OTROS'}</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-mist text-sand">
+                  DÍA DE PAGO: ${tp.dueDay}
+                </span>
+                <span class="font-mono text-[10px] px-2 py-0.5 ${tp.paidThisMonth ? 'bg-sage/20 border border-sage text-sage' : 'bg-eclipse/20 border border-eclipse text-terracotta'}">
+                  ${tp.paidThisMonth ? 'PAGADO ✓' : 'PENDIENTE'}
+                </span>
+              </div>
+              <p class="font-mono text-xs text-sand/90">${tp.concept} <span class="text-terracotta">(${tp.place})</span></p>
+              <p class="font-mono text-[11px] text-ash">DATOS DE TRANSFERENCIA: <strong class="text-sand">${tp.bankInfo}</strong></p>
+              <div class="flex items-center gap-2 pt-1">
+                <span class="font-mono text-[10px] px-2 py-0.5 bg-abyss border border-mist text-ochre">MENSUALIDAD ${tp.currentInstallment} DE ${tp.totalInstallments}</span>
+                <button onclick="stepThirdPartyInstallment('${tp.id}', -1)" class="px-2 py-0.5 bg-panel border border-mist text-xs font-mono">-</button>
+                <button onclick="stepThirdPartyInstallment('${tp.id}', 1)" class="px-2 py-0.5 bg-panel border border-mist text-xs font-mono">+</button>
+              </div>
+            </div>
+            <div class="flex sm:flex-col items-center sm:items-end justify-between border-t sm:border-t-0 border-mist pt-2 sm:pt-0">
+              <div class="text-right">
+                <div class="font-mono text-base font-bold text-terracotta">${formatCurrency(tp.monthlyAmount)}</div>
+                <span class="font-mono text-[10px] text-ash">PAGO MENSUAL</span>
+              </div>
+              <button onclick="deleteThirdParty('${tp.id}')" class="font-mono text-[10px] text-ash hover:text-eclipse mt-1">ELIMINAR ✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderServicesTab() {
+      const container = document.getElementById('servicesContainer');
+      if (db.services.length === 0) {
+        container.innerHTML = `<div class="cyber-card p-6 text-center font-mono text-xs text-ash">SIN SERVICIOS FIJOS REGISTRADOS.</div>`;
+        return;
+      }
+
+      container.innerHTML = db.services.map(srv => {
+        const card = db.cards.find(c => c.id === srv.paymentMethod);
+        let routingLabel = '';
+        if (card) {
+          if (card.cardType === 'TDD') {
+            routingLabel = `DOMICILIADO A TDD ${card.name} (LIQUIDACIÓN INMEDIATA ✓)`;
+          } else {
+            const inCurrentCut = Number(srv.billingDay) <= Number(card.cutoffDay);
+            routingLabel = `DOMICILIADO A TDC ${card.name} (${inCurrentCut ? 'ENTRA EN CORTE DEL MES' : 'POST-CORTE PRÓX. MES'})`;
+          }
+        } else {
+          routingLabel = `PAGO DIRECTO / TRANSFERENCIA (${srv.paidThisMonth ? 'PAGADO ESTE MES ✓' : 'PENDIENTE EN CHECKLIST DEL MES'})`;
+        }
+
+        return `
+          <div class="cyber-card p-3.5 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-mono text-sm font-bold text-sand">${srv.name}</span>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 bg-panel border border-mist text-ash">${srv.category}</span>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 bg-abyss border border-mist text-ochre">COBRO DÍA ${srv.billingDay}</span>
+              </div>
+              <p class="font-mono text-[11px] text-ash mt-1">ID / REFERENCIA: <strong class="text-sand">${srv.ref}</strong></p>
+              <p class="font-mono text-[10px] text-terracotta mt-0.5">${routingLabel}</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <div class="font-mono text-base font-bold text-sand">${formatCurrency(srv.cost)}</div>
+              <button onclick="deleteService('${srv.id}')" class="font-mono text-[10px] text-ash hover:text-eclipse mt-1">ELIMINAR ✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== INTERACTIVE ACTIONS & CRUD ====================
+    function toggleItemPaid(type, id) {
+      if (type === 'TDC') {
+        const card = db.cards.find(c => c.id === id);
+        if (card) card.paidThisMonth = !card.paidThisMonth;
+      } else if (type === 'TERCERO') {
+        const tp = db.thirdParty.find(t => t.id === id);
+        if (tp) tp.paidThisMonth = !tp.paidThisMonth;
+      } else if (type === 'SERVICIO') {
+        const srv = db.services.find(s => s.id === id);
+        if (srv) srv.paidThisMonth = !srv.paidThisMonth;
+      }
+      saveDatabase();
+    }
+
+    function toggleChargeCycleForce(cardId, chargeId) {
+      const card = db.cards.find(c => c.id === cardId);
+      if (!card) return;
+      const ch = card.charges.find(x => x.id === chargeId);
+      if (!ch) return;
+
+      const currentlyIn = isChargeInCurrentCutoff(ch, card);
+      ch.forceCycle = currentlyIn ? 'NEXT' : 'CURRENT';
+      saveDatabase();
+      showToast(ch.forceCycle === 'CURRENT' ? 'CARGO ASIGNADO AL CORTE DE ESTE MES' : 'CARGO DIFERIDO AL SIGUIENTE MES');
+    }
+
+    function stepChargeMsi(cardId, chargeId, delta) {
+      const card = db.cards.find(c => c.id === cardId);
+      if (!card) return;
+      const ch = card.charges.find(x => x.id === chargeId);
+      if (!ch) return;
+      const nextVal = Number(ch.currentMonth) + delta;
+      if (nextVal >= 1 && nextVal <= Number(ch.totalMonths)) {
+        ch.currentMonth = nextVal;
+        saveDatabase();
+      }
+    }
+
+    function stepThirdPartyInstallment(tpId, delta) {
+      const tp = db.thirdParty.find(t => t.id === tpId);
+      if (!tp) return;
+      const nextVal = Number(tp.currentInstallment) + delta;
+      if (nextVal >= 1 && nextVal <= Number(tp.totalInstallments)) {
+        tp.currentInstallment = nextVal;
+        saveDatabase();
+      }
+    }
+
+    // Modals & Forms
+    function openCardModal() {
+      document.getElementById('formCard').reset();
+      document.getElementById('cardType').value = 'TDC';
+      toggleCardTypeFields();
+      document.getElementById('modalCard').classList.remove('hidden');
+    }
+
+    function toggleCardTypeFields() {
+      const cType = document.getElementById('cardType').value;
+      const limitLabel = document.getElementById('cardLimitLabel');
+      const cutoffWrap = document.getElementById('cardCutoffWrap');
+      const dueWrap = document.getElementById('cardDueWrap');
+      const helper = document.getElementById('cardTypeHelperNotice');
+      const gridWrap = document.getElementById('tdcSpecificFields');
+
+      if (cType === 'TDD') {
+        limitLabel.textContent = 'SALDO / PRESUPUESTO MENSUAL ($)';
+        cutoffWrap.classList.add('hidden');
+        dueWrap.classList.add('hidden');
+        gridWrap.className = 'grid grid-cols-1 gap-2';
+        helper.innerHTML = `• <strong class="text-sage">TARJETA DE DÉBITO (TDD):</strong> Todos los cargos y servicios domiciliados se descuentan al momento y aparecen automáticamente en el <strong class="text-sage">Tablero a Liquidar como YA LIQUIDADOS (✓)</strong>.`;
+      } else {
+        limitLabel.textContent = 'LÍMITE CRÉDITO ($)';
+        cutoffWrap.classList.remove('hidden');
+        dueWrap.classList.remove('hidden');
+        gridWrap.className = 'grid grid-cols-3 gap-2';
+        helper.innerHTML = `• Las compras realizadas <strong class="text-sand">en o antes del Día de Corte</strong> se integran al pago del mes actual.<br>• Las compras realizadas <strong class="text-ochre">después del Día de Corte</strong> pasan automáticamente al apartado del <strong class="text-ochre">Próximo Mes</strong>.`;
+      }
+    }
+
+    function saveCard(e) {
+      e.preventDefault();
+      const cardType = document.getElementById('cardType').value || 'TDC';
+      const name = document.getElementById('cardName').value.toUpperCase().trim();
+      const digits = document.getElementById('cardDigits').value.toUpperCase().trim();
+      const limit = Number(document.getElementById('cardLimit').value) || 0;
+      const cutoffDay = cardType === 'TDD' ? 31 : Math.min(31, Math.max(1, Number(document.getElementById('cardCutoff').value) || 8));
+      const dueDay = cardType === 'TDD' ? 1 : Math.min(31, Math.max(1, Number(document.getElementById('cardDue').value) || 28));
+
+      db.cards.push({
+        id: 'card-' + Date.now(),
+        cardType,
+        name,
+        digits,
+        limit,
+        cutoffDay,
+        dueDay,
+        paidThisMonth: cardType === 'TDD', // TDD starts automatically marked as liquidated
+        charges: []
+      });
+
+      closeModal('modalCard');
+      saveDatabase();
+      showToast(`TARJETA ${cardType} ${name} REGISTRADA`);
+    }
+
+    function deleteCard(cardId) {
+      db.cards = db.cards.filter(c => c.id !== cardId);
+      db.services.forEach(s => {
+        if (s.paymentMethod === cardId) s.paymentMethod = 'DIRECTO';
+      });
+      saveDatabase();
+      showToast('TARJETA ELIMINADA');
+    }
+
+    function populateCardSelectors(selectedId) {
+      const chargeSelect = document.getElementById('chargeCardId');
+      chargeSelect.innerHTML = db.cards.map(c => {
+        const label = c.cardType === 'TDD'
+          ? `[TDD DÉBITO] ${c.name} (*${c.digits}) - LIQUIDACIÓN INMEDIATA`
+          : `[TDC CRÉDITO] ${c.name} (*${c.digits}) - CORTE DÍA ${c.cutoffDay}`;
+        return `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${label}</option>`;
+      }).join('');
+
+      const srvSelect = document.getElementById('srvPaymentMethod');
+      srvSelect.innerHTML = `<option value="DIRECTO">PAGO DIRECTO / TRANSFERENCIA MANUAL</option>` +
+        db.cards.map(c => `<option value="${c.id}">DOMICILIADO A ${c.cardType === 'TDD' ? 'TDD' : 'TDC'} ${c.name} (*${c.digits})</option>`).join('');
+    }
+
+    function openQuickExpenseModal() {
+      if (db.cards.length === 0) {
+        showToast('PRIMERO REGISTRA UNA TARJETA DE CRÉDITO O DÉBITO');
+        switchTab('tarjetas');
+        return;
+      }
+      openChargeModalForCard(db.cards[0].id);
+    }
+
+    function openChargeModalForCard(cardId) {
+      document.getElementById('formCharge').reset();
+      populateCardSelectors(cardId);
+      document.getElementById('chargePurchaseDay').value = new Date().getDate();
+      previewCutoffRule();
+      document.getElementById('modalCharge').classList.remove('hidden');
+    }
+
+    function toggleMsiFields() {
+      const cardId = document.getElementById('chargeCardId').value;
+      const card = db.cards.find(c => c.id === cardId);
+      const isDebit = card && card.cardType === 'TDD';
+      const mod = document.getElementById('chargeModality').value;
+      const box = document.getElementById('msiFieldsContainer');
+      if (!isDebit && mod === 'MSI') box.classList.remove('hidden');
+      else box.classList.add('hidden');
+    }
+
+    function previewCutoffRule() {
+      const cardId = document.getElementById('chargeCardId').value;
+      const purchaseDay = Number(document.getElementById('chargePurchaseDay').value) || 1;
+      const banner = document.getElementById('cutoffPreviewBanner');
+      const modalityWrap = document.getElementById('chargeModalityWrap');
+      const modalitySelect = document.getElementById('chargeModality');
+      const card = db.cards.find(c => c.id === cardId);
+      if (!card) return;
+
+      if (card.cardType === 'TDD') {
+        modalitySelect.value = 'CONTADO';
+        modalityWrap.classList.add('opacity-50', 'pointer-events-none');
+        toggleMsiFields();
+        banner.className = 'p-2 bg-abyss border border-sage text-sage font-mono text-[10px]';
+        banner.innerHTML = `✓ TARJETA DE DÉBITO (${card.name}): <strong>SE LIQUIDA AL INSTANTE</strong> Y APARECE AUTOMÁTICAMENTE COMO <strong>PAGADO ✓</strong> EN EL TABLERO DEL MES.`;
+        return;
+      }
+
+      modalityWrap.classList.remove('opacity-50', 'pointer-events-none');
+      toggleMsiFields();
+
+      if (purchaseDay <= card.cutoffDay) {
+        banner.className = 'p-2 bg-abyss border border-sage text-sage font-mono text-[10px]';
+        banner.innerHTML = `✓ DÍA DE COMPRA (${purchaseDay}) ≤ CORTE DE ${card.name} (DÍA ${card.cutoffDay}): <strong>ENTRA EN LOS PAGOS DE ESTE MES</strong> (LÍMITE PAGO DÍA ${card.dueDay}).`;
+      } else {
+        banner.className = 'p-2 bg-abyss border border-ochre text-ochre font-mono text-[10px]';
+        banner.innerHTML = `⏭ DÍA DE COMPRA (${purchaseDay}) &gt; CORTE DE ${card.name} (DÍA ${card.cutoffDay}): <strong>COMPRA POST-CORTE, PASA A GASTOS DEL PRÓXIMO MES</strong>.`;
+      }
+    }
+
+    function saveCharge(e) {
+      e.preventDefault();
+      const cardId = document.getElementById('chargeCardId').value;
+      const card = db.cards.find(c => c.id === cardId);
+      if (!card) return;
+
+      const isDebit = card.cardType === 'TDD';
+      const place = document.getElementById('chargePlace').value.toUpperCase().trim();
+      const purchaseDay = Math.min(31, Math.max(1, Number(document.getElementById('chargePurchaseDay').value) || 1));
+      const concept = document.getElementById('chargeConcept').value.toUpperCase().trim();
+      const productType = (document.getElementById('chargeProductType').value || 'OTROS').toUpperCase().trim();
+      const totalAmount = Number(document.getElementById('chargeTotal').value) || 0;
+      const modality = isDebit ? 'CONTADO' : document.getElementById('chargeModality').value;
+      const totalMonths = (!isDebit && modality === 'MSI') ? Number(document.getElementById('chargeTotalMonths').value) : 1;
+      const currentMonth = (!isDebit && modality === 'MSI') ? Number(document.getElementById('chargeCurrentMonth').value) : 1;
+
+      if (isDebit) {
+        card.paidThisMonth = true;
+      }
+
+      card.charges.push({
+        id: 'ch-' + Date.now(),
+        concept,
+        place,
+        productType,
+        purchaseDay,
+        totalAmount,
+        modality,
+        currentMonth,
+        totalMonths,
+        forceCycle: isDebit ? 'CURRENT' : 'AUTO'
+      });
+
+      closeModal('modalCharge');
+      saveDatabase();
+      showToast(isDebit ? `GASTO EN DÉBITO ${card.name} LIQUIDADO AL INSTANTE ✓` : `COMPRA REGISTRADA EN ${card.name}`);
+    }
+
+    function deleteCharge(cardId, chargeId) {
+      const card = db.cards.find(c => c.id === cardId);
+      if (!card) return;
+      card.charges = card.charges.filter(ch => ch.id !== chargeId);
+      saveDatabase();
+      showToast('CARGO ELIMINADO');
+    }
+
+    function openThirdPartyModal() {
+      document.getElementById('formThirdParty').reset();
+      document.getElementById('modalThirdParty').classList.remove('hidden');
+    }
+
+    function saveThirdParty(e) {
+      e.preventDefault();
+      db.thirdParty.push({
+        id: 'tp-' + Date.now(),
+        person: document.getElementById('tpPerson').value.toUpperCase().trim(),
+        supportType: document.getElementById('tpSupportType').value,
+        concept: document.getElementById('tpConcept').value.toUpperCase().trim(),
+        place: document.getElementById('tpPlace').value.toUpperCase().trim(),
+        productType: (document.getElementById('tpProductType').value || 'OTROS').toUpperCase().trim(),
+        bankInfo: document.getElementById('tpBankInfo').value.toUpperCase().trim(),
+        dueDay: Math.min(31, Math.max(1, Number(document.getElementById('tpDueDay').value) || 15)),
+        monthlyAmount: Number(document.getElementById('tpMonthlyAmount').value) || 0,
+        currentInstallment: Number(document.getElementById('tpCurrentInstallment').value) || 1,
+        totalInstallments: Number(document.getElementById('tpTotalInstallments').value) || 1,
+        paidThisMonth: false
+      });
+
+      closeModal('modalThirdParty');
+      saveDatabase();
+      showToast('REGISTRO DE TERCERO GUARDADO');
+    }
+
+    function deleteThirdParty(id) {
+      db.thirdParty = db.thirdParty.filter(t => t.id !== id);
+      saveDatabase();
+      showToast('REGISTRO ELIMINADO');
+    }
+
+    function openServiceModal() {
+      document.getElementById('formService').reset();
+      populateCardSelectors();
+      document.getElementById('modalService').classList.remove('hidden');
+    }
+
+    function saveService(e) {
+      e.preventDefault();
+      db.services.push({
+        id: 'srv-' + Date.now(),
+        name: document.getElementById('srvName').value.toUpperCase().trim(),
+        category: document.getElementById('srvCategory').value,
+        ref: document.getElementById('srvRef').value.toUpperCase().trim(),
+        billingDay: Math.min(31, Math.max(1, Number(document.getElementById('srvBillingDay').value) || 15)),
+        cost: Number(document.getElementById('srvCost').value) || 0,
+        paymentMethod: document.getElementById('srvPaymentMethod').value,
+        paidThisMonth: false
+      });
+
+      closeModal('modalService');
+      saveDatabase();
+      showToast('SERVICIO REGISTRADO');
+    }
+
+    function deleteService(id) {
+      db.services = db.services.filter(s => s.id !== id);
+      saveDatabase();
+      showToast('SERVICIO ELIMINADO');
+    }
+
+    // ==================== PORTABILITY: JSON & CSV EXPORT / IMPORT ====================
+    function exportDatabaseJSON() {
+      const dataStr = JSON.stringify(db, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `APOLLO_RESPALDO_${stamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('ARCHIVO .JSON DESCARGADO');
+    }
+
+    function exportDatabaseCSV() {
+      const rows = [
+        ['CATEGORIA', 'TIPO TARJETA / CANAL', 'ORIGEN / TARJETA', 'CONCEPTO', 'ESTABLECIMIENTO / APP', 'TIPO_PRODUCTO_SERVICIO', 'DIA COMPRA / COBRO', 'DIA CORTE TDC', 'DIA LIMITE PAGO', 'CICLO DE FACTURACION', 'MODALIDAD', 'PAGO MENSUAL', 'MONTO TOTAL', 'ESTADO CHECKLIST MES']
+      ];
+
+      db.cards.forEach(card => {
+        const isDebit = card.cardType === 'TDD';
+        card.charges.forEach(ch => {
+          const inCut = isChargeInCurrentCutoff(ch, card);
+          const installment = getChargeMonthlyInstallment(ch);
+          rows.push([
+            isDebit ? 'TARJETA DE DEBITO' : 'TARJETA DE CREDITO',
+            isDebit ? 'TDD (LIQUIDACION INMEDIATA)' : 'TDC (CREDITO)',
+            `${card.name} (*${card.digits})`,
+            ch.concept,
+            ch.place,
+            ch.productType || 'OTROS',
+            ch.purchaseDay,
+            isDebit ? 'N/A' : card.cutoffDay,
+            isDebit ? 'INMEDIATO' : card.dueDay,
+            isDebit ? 'LIQUIDADO AL INSTANTE (MES ACTUAL)' : (inCut ? 'PAGO DEL MES ACTUAL' : 'GASTO PROXIMO MES (POST-CORTE)'),
+            (!isDebit && ch.modality === 'MSI') ? `MSI ${ch.currentMonth}/${ch.totalMonths}` : 'CONTADO',
+            installment.toFixed(2),
+            Number(ch.totalAmount).toFixed(2),
+            (isDebit ? (card.paidThisMonth !== false) : card.paidThisMonth) ? 'PAGADO / LIQUIDADO' : 'PENDIENTE'
+          ]);
+        });
+      });
+
+      db.thirdParty.forEach(tp => {
+        rows.push([
+          'TERCEROS / MISCELANEO',
+          'APOYO TERCERO',
+          tp.person,
+          tp.concept,
+          tp.place,
+          tp.productType || 'OTROS',
+          '-',
+          '-',
+          tp.dueDay,
+          'PAGO DEL MES ACTUAL',
+          `PAGO ${tp.currentInstallment}/${tp.totalInstallments}`,
+          Number(tp.monthlyAmount).toFixed(2),
+          (Number(tp.monthlyAmount) * Number(tp.totalInstallments)).toFixed(2),
+          tp.paidThisMonth ? 'PAGADO' : 'PENDIENTE'
+        ]);
+      });
+
+      db.services.forEach(srv => {
+        const card = db.cards.find(c => c.id === srv.paymentMethod);
+        const isDebit = card && card.cardType === 'TDD';
+        const inCut = card ? (isDebit || Number(srv.billingDay) <= Number(card.cutoffDay)) : true;
+        rows.push([
+          'SERVICIO / SUSCRIPCION',
+          card ? `DOMICILIADO ${card.cardType}` : 'PAGO DIRECTO',
+          card ? `${card.name} (*${card.digits})` : 'TRANSFERENCIA / DIRECTO',
+          srv.name,
+          srv.name,
+          srv.category || 'SUSCRIPCIONES / SOFTWARE',
+          srv.billingDay,
+          card && !isDebit ? card.cutoffDay : '-',
+          card ? (isDebit ? 'INMEDIATO' : card.dueDay) : srv.billingDay,
+          isDebit ? 'LIQUIDADO AL INSTANTE (TDD)' : (inCut ? 'PAGO DEL MES ACTUAL' : 'GASTO PROXIMO MES (POST-CORTE)'),
+          srv.ref,
+          Number(srv.cost).toFixed(2),
+          Number(srv.cost).toFixed(2),
+          (card ? (isDebit ? (card.paidThisMonth !== false) : card.paidThisMonth) : srv.paidThisMonth) ? 'PAGADO / LIQUIDADO' : 'PENDIENTE'
+        ]);
+      });
+
+      const csvContent = '\uFEFF' + rows.map(r =>
+        r.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+      ).join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `APOLLO_REPORTE_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('REPORTE .CSV DESCARGADO');
+    }
+
+    function handleImportJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && Array.isArray(imported.cards)) {
+            db = imported;
+            saveDatabase();
+            showToast('BASE DE DATOS RESTAURADA CON ÉXITO');
+          } else {
+            showToast('ARCHIVO .JSON NO VÁLIDO');
+          }
+        } catch (err) {
+          showToast('ERROR AL LEER EL ARCHIVO .JSON');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetToDemoData() {
+      db = getDefaultDatabase();
+      saveDatabase();
+      showToast('DATOS DE EJEMPLO RESTABLECIDOS');
+    }
+
+    // ==================== NAVIGATION & UI HELPERS ====================
+    function switchTab(tabName) {
+      ['resumen', 'tarjetas', 'terceros', 'servicios', 'respaldo'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${t}`);
+        btn.classList.remove('text-terracotta', 'border-terracotta');
+        btn.classList.add('text-ash', 'border-transparent');
+      });
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      activeBtn.classList.remove('text-ash', 'border-transparent');
+      activeBtn.classList.add('text-terracotta', 'border-terracotta');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function changeMonth(delta) {
+      currentMonthIdx += delta;
+      if (currentMonthIdx > 11) {
+        currentMonthIdx = 0;
+        currentYear++;
+      } else if (currentMonthIdx < 0) {
+        currentMonthIdx = 11;
+        currentYear--;
+      }
+      renderAll();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2600);
+    }
+
+    // Automatic Uppercase Enforcement on all text inputs
+    document.addEventListener('input', function(e) {
+      if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        e.target.value = e.target.value.toUpperCase();
+        e.target.setSelectionRange(start, end);
+      }
+    });
+
+    // Register Offline Service Worker for iPhone PWA Support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `
+          const CACHE_NAME = 'apollo-pwa-v2';
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', e => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        try {
+          const blob = new Blob([swCode], { type: 'application/javascript' });
+          navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        } catch (err) {}
+      });
+    }
+
+    window.onload = function() {
+      renderAll();
+    };
+  </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}</script>
+</body>
+</html>
